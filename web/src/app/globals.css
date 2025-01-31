@@ -1,0 +1,76 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html,
+body {
+    margin: 0;
+    height: 100%;
+    overflow: hidden;
+}
+
+@keyframes switch-light-animation {
+    0% {
+        opacity: 0;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+
+@keyframes switch-dark-animation {
+    0% {
+        opacity: 0;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+
+.animate-switch-light {
+    animation: switch-light-animation 1s;
+}
+
+.animate-switch-dark {
+    animation: switch-dark-animation 0.5s;
+}
+
+.light {
+    --bg-dark: rgb(226, 232, 240);
+    --bg-medium-dark: rgb(228, 232, 240);
+    --bg-medium: rgb(241, 245, 249);
+    --bg-light: rgb(255, 255, 255);
+    --bg-accent: #4ade80;
+
+    --fg-dark: rgb(0, 0, 0);
+    --fg-medium: rgb(107, 114, 128);
+    --fg-light: rgb(128, 128, 128);
+    --fg-accent: rgb(255, 255, 255);
+
+    background: var(--bg-light);
+
+    /*opacity: 0;
+    animation: switch-light-animation 0.3s;
+    animation-fill-mode: forwards;*/
+}
+
+.dark {
+    --bg-dark: rgb(44, 44, 44);
+    --bg-medium-dark: rgb(50, 50, 50);
+    --bg-medium: rgb(58, 58, 58);
+    --bg-light: rgb(66, 65, 65);
+    --bg-accent: #16a34a;
+
+    --fg-dark: rgb(255, 255, 255);
+    --fg-medium: rgb(178, 178, 178);
+    --fg-light: rgb(152, 151, 151);
+    --fg-accent: rgb(255, 255, 255);
+
+    background: var(--bg-light);
+
+    /*opacity: 0;
+    animation: switch-dark-animation 0.3s;
+    animation-fill-mode: forwards;*/
+}
