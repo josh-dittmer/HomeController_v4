@@ -1,30 +1,25 @@
-FROM node:18-alpine as base
+FROM node:18-alpine AS base
 
-FROM base as deps
+FROM base AS deps
 WORKDIR /app
 
 RUN apk add --no-cache libc6-compat
 
-RUN mkdir hc_api
 RUN mkdir web
 RUN mkdir hc_models
 
-COPY hc_api/package.json hc_api/package-lock.json* ./hc_api/
 COPY web/package.json web/package-lock.json* ./web/
 COPY hc_models/package.json hc_models/package-lock.json* ./hc_models/
 
-RUN cd hc_api && npm ci
 RUN cd web && npm ci
-RUN cd hc_models && ci
+RUN cd hc_models && npm ci
 
-FROM base as builder
+FROM base AS builder
 WORKDIR /app
 
-COPY --from=deps /app/hc_api/node_modules ./hc_api/node_modules
 COPY --from=deps /app/web/node_modules ./web/node_modules
 COPY --from=deps /app/hc_models/node_modules ./hc_models/node_modules
 
-COPY ./hc_api ./hc_api
 COPY ./web ./web
 COPY ./hc_models ./hc_models
 
@@ -33,32 +28,31 @@ RUN cd hc_models \
     && npm run build \
     && npm link
 
-# Build hc_api
-RUN cd hc_api \
-    && npm link hc_models \
-    && npm run build
-
 # Build web
 RUN cd web \
     && npm link hc_models \
     && npm run build
 
-FROM base as runner
+FROM base AS runner
 WORKDIR /app
 
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
 
 RUN addgroup --system --gid 1001 nodejs
-RUN adduser --system --uid 1001 nodejs
+RUN adduser --system --uid 1001 nextjs
 
-RUN mkdir hc_api
-RUN mkdir web
+#COPY --from=builder /app/web/public ./public
 
-COPY --from=builder --chown=nodejs:nodejs /app/web/.next/standalone ./web/
-COPY --from=builder --chown=nodejs:nodejs /app/.next/static ./web/.next/static
+COPY --from=builder --chown=nextjs:nodejs /app/web/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /app/web/.next/static ./.next/static
 
-USER nodejs
+USER nextjs
 
-EXPOSE 42069
 EXPOSE 3000
+
+ENV PORT=3000
+ENV HOSTNAME="0.0.0.0"
+
+CMD ["node", "server.js"]
+#CMD [ "tail", "-F", "VqKVJUkBQKmcNkfC" ]

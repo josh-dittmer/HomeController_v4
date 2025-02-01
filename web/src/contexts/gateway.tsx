@@ -53,7 +53,7 @@ export function GatewayProvider({ children }: { children: ReactNode }) {
     };
 
     useEffect(() => {
-        socketInst.current = io(Endpoints.mainApiUrl, {
+        socketInst.current = io(Endpoints.mainApiPublicUrl, {
             path: `${Endpoints.mainApiPrefix}/gateway`,
             auth: async (cb) => {
                 const res = await getTicket();

@@ -1,0 +1,7 @@
+node_modules
+.next
+.dockerignore
+.gitignore
+.DS_Store
+tsconfig.tsbuildinfo
+README.md

@@ -33,7 +33,7 @@ export async function request(url: string, data: RequestInit, useAuth: boolean):
 }
 
 export async function requestAndDecode<C extends t.Mixed>(path: string, data: RequestInit, decoder: C): Promise<t.TypeOf<typeof decoder>> {
-    const response = await request(`${Endpoints.mainApi}${path}`, data, true);
+    const response = await request(`${Endpoints.mainApiInternal}${path}`, data, true);
     const parsed: unknown = await response.json();
 
     const decoded = decoder.decode(parsed);
