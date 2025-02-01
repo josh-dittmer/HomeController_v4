@@ -13,7 +13,7 @@
     "start:prod": "dotenvx run -f .env.prod -- node dist/src/main.js",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "db:push": "drizzle-kit push",
-    "db:generate": "drizzle-kit generate",
+    "db:generate": "drizzle-kit generate --name=init",
     "db:seed": "node dist/src/db/seed.js"
   },
   "type": "module",
