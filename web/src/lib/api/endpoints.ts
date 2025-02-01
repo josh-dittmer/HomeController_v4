@@ -9,7 +9,7 @@ export const Endpoints = {
     mainApiInternalUrl: `${process.env.NEXT_PUBLIC_MAIN_API_INTERNAL_URL!}`,
     mainApiPrefix: `${process.env.NEXT_PUBLIC_MAIN_API_PREFIX!}`,
     mainApiPublic: `${process.env.NEXT_PUBLIC_MAIN_API_PUBLIC_URL!}${process.env.NEXT_PUBLIC_MAIN_API_PREFIX!}`,
-    mainApiInternal: `${process.env.NEXT_PUBLIC_MAIN_API_INTERNAL_URL!}${process.env.NEXT_PUBLIC_MAIN_API_PREFIX!}`,
+    mainApiInternal: `${process.env.NEXT_PUBLIC_AUTH_API_INTERNAL_URL ?? process.env.NEXT_PUBLIC_AUTH_API_PUBLIC_URL!}${process.env.NEXT_PUBLIC_MAIN_API_PREFIX!}`,
 
     callbackUrl: `${process.env.NEXT_PUBLIC_SELF_URL!}/callback`
 };
