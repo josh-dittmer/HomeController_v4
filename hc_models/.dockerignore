@@ -3,3 +3,4 @@ dist
 .dockerignore
 .gitignore
 .DS_Store
+tsconfig.tsbuildinfo
