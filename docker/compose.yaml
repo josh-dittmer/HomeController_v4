@@ -1,3 +1,4 @@
+name: "homecontroller"
 services:
     web:
         build:
