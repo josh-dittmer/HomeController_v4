@@ -28,7 +28,7 @@ export default function LoginPage() {
     }, [data, isSuccess]);
 
     return (
-        <div className="flex justify-center items-center h-screen w-screen">
+        <div className="flex justify-center items-center h-svh w-svw">
             <LoadingSpinner text="Redirecting to Joth..." />
         </div>
     )

@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "dotenvx run -f .env.dev -- next dev --turbopack",
+    "dev-https": "dotenvx run -f .env.dev -- next dev --turbopack --experimental-https",
     "build": "dotenvx run -f .env.prod -- next build",
     "lint": "next lint"
   },

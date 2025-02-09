@@ -12,7 +12,7 @@ export default function DeviceList({ res }: { res: GetAllDevicesResponseT }) {
     const hasOfflineDevice = data.offlineDevices.length > 0;
 
     return (
-        <div className="p-4 overflow-y-scroll h-[calc(100vh-80px)]">
+        <div className="p-4 overflow-y-scroll h-[calc(100svh-80px)]">
             {!hasOnlineDevice && !hasOfflineDevice && (
                 <div className="h-full flex justify-center items-center text-center">
                     <p className="text-fg-medium">You don&apos;t have any devices! Add one to get started!</p>

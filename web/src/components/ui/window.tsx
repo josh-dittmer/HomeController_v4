@@ -46,10 +46,10 @@ export default function Window({ visible, title, Icon, children }: { visible: bo
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 0.75 }}
                         exit={{ opacity: 0 }}
-                        className="fixed top-0 left-0 z-10 w-screen h-screen bg-black"
+                        className="fixed top-0 left-0 z-10 w-svw h-svh bg-black"
                     />
                     <div
-                        className="fixed top-0 left-0 z-20 w-screen h-screen flex justify-center items-center"
+                        className="fixed top-0 left-0 z-20 w-svw h-svh flex justify-center items-center"
                     >
                         <motion.div
                             initial={{ opacity: 0, transform: 'translateY(10px)' }}

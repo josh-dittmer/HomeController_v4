@@ -14,7 +14,7 @@ export async function createLoginUrl(clearSession: boolean): Promise<LoginUrlInf
     url.searchParams.set('client_id', ClientId);
     url.searchParams.set('redirect_uri', Endpoints.callbackUrl);
     url.searchParams.set('response_type', 'code');
-    url.searchParams.set('scope', '');
+    url.searchParams.set('scope', 'app_access');
     url.searchParams.set('state', state);
     url.searchParams.set('code_challenge', challenge);
     url.searchParams.set('code_challenge_method', 'S256');

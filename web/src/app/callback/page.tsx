@@ -37,7 +37,7 @@ export default function CallbackPage() {
 
     if (isLoading) {
         return (
-            <div className="flex justify-center items-center h-screen w-screen">
+            <div className="flex justify-center items-center h-svh w-svw">
                 <LoadingSpinner />
             </div>
         )
@@ -45,7 +45,7 @@ export default function CallbackPage() {
 
     if (isError) {
         return (
-            <div className="flex flex-col justify-center items-center h-screen w-screen">
+            <div className="flex flex-col justify-center items-center h-svh w-svw">
                 <p className="text-fg-light">Something went wrong!</p>
                 <p className="text-fg-light underline"><Link href="/login">Try Again</Link></p>
             </div>
@@ -53,7 +53,7 @@ export default function CallbackPage() {
     }
 
     return (
-        <div className="flex justify-center items-center h-screen w-screen">
+        <div className="flex justify-center items-center h-svh w-svw">
             <LoadingSpinner />
         </div>
     )

@@ -21,7 +21,7 @@ export default function RGBLightsControlPanel({ device }: { device: DeviceT }) {
     const ready = state && !loading;
 
     return (
-        <div className="h-[calc(100vh-152px)] pt-4">
+        <div className="h-[calc(100svh-152px)] pt-4">
             {ready ? (
                 <ColorPreview r={state.r} g={state.g} b={state.b} />
             ) : (
