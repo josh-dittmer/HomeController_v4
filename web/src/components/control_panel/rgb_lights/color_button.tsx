@@ -2,9 +2,15 @@ import { GatewayContextType } from "@/contexts/gateway";
 import { Commands } from "@/lib/api/device_data/rgb_lights";
 import { motion } from 'motion/react';
 
-export default function ColorButton({ enabled, ctx, deviceId, r, g, b, cn }: { enabled: boolean | null, ctx: GatewayContextType | null, deviceId: string, r: number, g: number, b: number, cn: string }) {
-    const setColor = (r: number, g: number, b: number) => {
-        ctx?.sendCommand(deviceId, Commands.setColor(r, g, b));
+export default function ColorButton({ enabled, ctx, deviceId, r, g, b, selectedR, selectedG, selectedB, cn }: { enabled: boolean | null, ctx: GatewayContextType | null, deviceId: string, r: number, g: number, b: number, selectedR: number | undefined, selectedG: number | undefined, selectedB: number | undefined, cn: string }) {
+    const setColor = () => {
+        if (r === selectedR && g === selectedG && b === selectedB) {
+            ctx?.sendCommand(deviceId, Commands.powerOff());
+        }
+
+        else {
+            ctx?.sendCommand(deviceId, Commands.setColor(r, g, b));
+        }
     }
 
     return (
@@ -15,7 +21,7 @@ export default function ColorButton({ enabled, ctx, deviceId, r, g, b, cn }: { e
                     animate={{ scale: 1 }}
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.96 }}
-                    onClick={() => setColor(r, g, b)}
+                    onClick={() => setColor()}
                 >
                     <div
                         style={{

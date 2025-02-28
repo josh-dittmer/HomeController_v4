@@ -38,10 +38,10 @@ export function RGBLightsCard({ device }: { device: DeviceT }) {
                         </div>
                         <div className="flex justify-center">
                             <div className="flex gap-3 justify-center items-center">
-                                <ColorButton enabled={ready} ctx={ctx} deviceId={device.deviceId} r={255} g={255} b={255} cn="p-2" />
-                                <ColorButton enabled={ready} ctx={ctx} deviceId={device.deviceId} r={255} g={0} b={0} cn="p-2" />
-                                <ColorButton enabled={ready} ctx={ctx} deviceId={device.deviceId} r={255} g={0} b={255} cn="p-2" />
-                                <ColorButton enabled={ready} ctx={ctx} deviceId={device.deviceId} r={0} g={255} b={255} cn="p-2" />
+                                <ColorButton enabled={ready} ctx={ctx} deviceId={device.deviceId} r={255} g={255} b={255} selectedR={state?.r} selectedG={state?.g} selectedB={state?.b} cn="p-2" />
+                                <ColorButton enabled={ready} ctx={ctx} deviceId={device.deviceId} r={255} g={0} b={0} selectedR={state?.r} selectedG={state?.g} selectedB={state?.b} cn="p-2" />
+                                <ColorButton enabled={ready} ctx={ctx} deviceId={device.deviceId} r={255} g={0} b={255} selectedR={state?.r} selectedG={state?.g} selectedB={state?.b} cn="p-2" />
+                                <ColorButton enabled={ready} ctx={ctx} deviceId={device.deviceId} r={0} g={255} b={255} selectedR={state?.r} selectedG={state?.g} selectedB={state?.b} cn="p-2" />
                                 <ProgramButton enabled={ready} ctx={ctx} deviceId={device.deviceId} program={'rainbowFade'} selectedProgram={state?.program} cn="p-2" />
                             </div>
                         </div>

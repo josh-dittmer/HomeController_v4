@@ -43,15 +43,15 @@ export default function RGBLightsControlPanel({ device }: { device: DeviceT }) {
                 <div className="p-2">
                     <div className="bg-bg-medium rounded-xl flex justify-center items-center w-full h-full">
                         <div className="grid gap-4 grid-rows-[1fr_1fr_1fr] grid-cols-[1fr_1fr_1fr]">
-                            <ColorButton enabled={ready} ctx={ctx} deviceId={device.deviceId} r={255} g={0} b={0} cn="p-3" />
-                            <ColorButton enabled={ready} ctx={ctx} deviceId={device.deviceId} r={0} g={255} b={0} cn="p-3" />
-                            <ColorButton enabled={ready} ctx={ctx} deviceId={device.deviceId} r={0} g={0} b={255} cn="p-3" />
-                            <ColorButton enabled={ready} ctx={ctx} deviceId={device.deviceId} r={255} g={255} b={0} cn="p-3" />
-                            <ColorButton enabled={ready} ctx={ctx} deviceId={device.deviceId} r={0} g={255} b={255} cn="p-3" />
-                            <ColorButton enabled={ready} ctx={ctx} deviceId={device.deviceId} r={255} g={0} b={255} cn="p-3" />
+                            <ColorButton enabled={ready} ctx={ctx} deviceId={device.deviceId} r={255} g={0} b={0} selectedR={state?.r} selectedG={state?.g} selectedB={state?.b} cn="p-3" />
+                            <ColorButton enabled={ready} ctx={ctx} deviceId={device.deviceId} r={0} g={255} b={0} selectedR={state?.r} selectedG={state?.g} selectedB={state?.b} cn="p-3" />
+                            <ColorButton enabled={ready} ctx={ctx} deviceId={device.deviceId} r={0} g={0} b={255} selectedR={state?.r} selectedG={state?.g} selectedB={state?.b} cn="p-3" />
+                            <ColorButton enabled={ready} ctx={ctx} deviceId={device.deviceId} r={255} g={255} b={0} selectedR={state?.r} selectedG={state?.g} selectedB={state?.b} cn="p-3" />
+                            <ColorButton enabled={ready} ctx={ctx} deviceId={device.deviceId} r={0} g={255} b={255} selectedR={state?.r} selectedG={state?.g} selectedB={state?.b} cn="p-3" />
+                            <ColorButton enabled={ready} ctx={ctx} deviceId={device.deviceId} r={255} g={0} b={255} selectedR={state?.r} selectedG={state?.g} selectedB={state?.b} cn="p-3" />
                             <ProgramButton enabled={ready} ctx={ctx} deviceId={device.deviceId} program={'rainbowFade'} selectedProgram={state?.program} cn="p-3" />
-                            <ColorButton enabled={ready} ctx={ctx} deviceId={device.deviceId} r={255} g={255} b={255} cn="p-3" />
-                            <ColorButton enabled={ready} ctx={ctx} deviceId={device.deviceId} r={255} g={255} b={255} cn="p-3" />
+                            <ColorButton enabled={ready} ctx={ctx} deviceId={device.deviceId} r={255} g={255} b={255} selectedR={state?.r} selectedG={state?.g} selectedB={state?.b} cn="p-3" />
+                            <ColorButton enabled={ready} ctx={ctx} deviceId={device.deviceId} r={255} g={255} b={255} selectedR={state?.r} selectedG={state?.g} selectedB={state?.b} cn="p-3" />
                         </div>
                     </div>
                 </div>
