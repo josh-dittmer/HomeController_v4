@@ -1,6 +1,9 @@
-node_modules
 dist
+node_modules
 .dockerignore
+.env.dev
 .gitignore
-.DS_Store
+.prettierignore
+.prettierrc
+eslint.config.js
 tsconfig.tsbuildinfo
