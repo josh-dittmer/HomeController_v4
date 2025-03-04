@@ -1,8 +1,8 @@
 import fs from 'fs';
 import jwt, { JwtPayload } from 'jsonwebtoken';
-import { KEY_PATH } from './common/values.js';
+import { PUBLIC_KEY_PATH } from './common/values.js';
 
-const secret = fs.readFileSync(KEY_PATH);
+const publicKey = fs.readFileSync(PUBLIC_KEY_PATH);
 
 interface JothJwtPayload extends JwtPayload {
     scope: string;
@@ -10,7 +10,7 @@ interface JothJwtPayload extends JwtPayload {
 }
 
 export function verifyJothJwt(token: string): JothJwtPayload {
-    const data = <JothJwtPayload>jwt.verify(token, secret);
+    const data = <JothJwtPayload>jwt.verify(token, publicKey, { algorithms: ['RS256'] });
 
     if (!data.sub || !data.scope || !data.email) {
         throw new Error('malformed jwt');
