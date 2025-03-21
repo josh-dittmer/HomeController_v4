@@ -1,6 +1,6 @@
 import LoadingSpinner from "@/components/loading_spinner/loading_spinner";
 
-export default function TestPage() {
+export default async function TestPage() {    
     return (
         <>
             <LoadingSpinner />

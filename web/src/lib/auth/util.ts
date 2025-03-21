@@ -1,4 +1,5 @@
 import * as t from 'io-ts';
+import { ResponseCookie } from 'next/dist/compiled/@edge-runtime/cookies';
 
 export type LoginUrlInfo = {
     url: string,
@@ -20,6 +21,12 @@ export const TokenStorageNames = {
     accessToken: 'access_token',
     refreshToken: 'refresh_token',
     expiration: 'expiration',
+};
+
+export const AuthCookieSettings: Partial<ResponseCookie> = {
+    secure: process.env.NODE_ENV !== 'development',
+    httpOnly: true,
+    path: '/'
 };
 
 function base64UrlEncode(a: ArrayBuffer) {

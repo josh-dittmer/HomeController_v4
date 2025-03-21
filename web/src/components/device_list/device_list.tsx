@@ -1,15 +1,19 @@
 'use client';
 
 import { useAllDevicesQuery } from "@/lib/queries/all_devices";
-import { DeviceT, GetAllDevicesResponseT } from "hc_models/models";
+import { DeviceT } from "hc_models/models";
 import { OfflineDeviceCard } from "./cards/offline_card";
 import { RGBLightsCard } from "./cards/rgb_lights_card";
 
-export default function DeviceList({ res }: { res: GetAllDevicesResponseT }) {
-    const { data } = useAllDevicesQuery(res);
+export default function DeviceList() {
+    const { data, isLoading } = useAllDevicesQuery();
 
-    const hasOnlineDevice = data.onlineDevices.length > 0;
-    const hasOfflineDevice = data.offlineDevices.length > 0;
+    const hasOnlineDevice = data && data.onlineDevices.length > 0;
+    const hasOfflineDevice = data && data.offlineDevices.length > 0;
+
+    if (!data || isLoading) {
+        return <p>DEVICE LIST LOADING...</p>
+    }
 
     return (
         <div className="p-4 overflow-y-scroll h-[calc(100svh-80px)]">

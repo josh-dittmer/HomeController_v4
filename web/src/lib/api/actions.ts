@@ -1,30 +1,28 @@
-'use server';
-
 import { isLeft } from 'fp-ts/lib/Either';
 import { CreateDeviceRequestT, CreateDeviceResponse, CreateDeviceResponseT, CreateUserRequestT, EditDeviceRequestT, EditUserRequestT, GetAllDevicesResponse, GetAllDevicesResponseT, GetMyProfileResponse, GetOneDeviceResponse, GetOneDeviceResponseT, TicketResponse, TicketResponseT } from "hc_models/models";
 import * as t from 'io-ts';
 import { PathReporter } from 'io-ts/PathReporter';
-import { redirect } from "next/navigation";
-import { getAccessToken } from "../auth/actions";
-import { Endpoints } from "./endpoints";
 import { deleteReq, getReq, postReq } from './util';
 
 export async function request(url: string, data: RequestInit, useAuth: boolean): Promise<Response> {
-    if (useAuth) {
+    /*if (useAuth) {
         try {
             const accessToken = await getAccessToken();
+            const h = await headers();
+
 
             data.headers = new Headers(data.headers);
             data.headers.set('Authorization', `Bearer ${accessToken}`);
-        } catch {
-            redirect('/login');
+        } catch(e) {
+            //console.log(e);
+            //redirect('/login');
         }
-    }
+    }*/
 
     const response = await fetch(url, data);
 
     if (response.status === 401) {
-        redirect('/login');
+        // redirect('/login');
     } else if (response.status !== 200 && response.status !== 201) {
         throw new Error('request failed');
     }
@@ -33,7 +31,8 @@ export async function request(url: string, data: RequestInit, useAuth: boolean):
 }
 
 export async function requestAndDecode<C extends t.Mixed>(path: string, data: RequestInit, decoder: C): Promise<t.TypeOf<typeof decoder>> {
-    const response = await request(`${Endpoints.mainApiInternal}${path}`, data, true);
+    //const response = await request(`${Endpoints.mainApiInternal}${path}`, data, true);
+    const response = await request(`/api/v1${path}`, data, false);
     const parsed: unknown = await response.json();
 
     const decoded = decoder.decode(parsed);

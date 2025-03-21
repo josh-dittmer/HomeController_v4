@@ -9,6 +9,7 @@ export class AuthMiddleware implements NestMiddleware {
 
     use(req: Request, res: Response, next: NextFunction) {
         if (!req.headers.authorization || !req.headers.authorization.startsWith('Bearer ')) {
+            this.logger.verbose('Request is missing authorization header');
             return unauthorized(res);
         }
 
@@ -21,7 +22,8 @@ export class AuthMiddleware implements NestMiddleware {
             res.locals.userEmail = data.email;
 
             this.logger.verbose(`Request is authorized for [${data.email}/${data.sub}]`);
-        } catch {
+        } catch (e) {
+            this.logger.verbose(`Token verification failed: ${e}`);
             return unauthorized(res);
         }
 

@@ -1,11 +1,10 @@
 'use server';
 
 import { isLeft } from 'fp-ts/lib/Either';
-import { ResponseCookie } from 'next/dist/compiled/@edge-runtime/cookies';
 import { cookies } from 'next/headers';
 import { NextRequest, NextResponse } from 'next/server';
 import { ClientId, Endpoints } from "../api/endpoints";
-import { createAuth, LoginUrlInfo, TokenResponse, TokenStorageNames } from "./util";
+import { AuthCookieSettings, createAuth, LoginUrlInfo, TokenResponse, TokenStorageNames } from "./util";
 
 export async function createLoginUrl(clearSession: boolean): Promise<LoginUrlInfo> {
     const { state, verifier, challenge } = await createAuth();
@@ -72,13 +71,6 @@ function getExpiration(expiresIn: number) {
     return expr.toString();
 }
 
-const cookieSettings: Partial<ResponseCookie> = {
-    secure: process.env.NODE_ENV !== 'development',
-    httpOnly: true,
-    sameSite: 'strict',
-    path: '/'
-};
-
 export async function handleCallback(code: string | null, newState: string | null, storedState: string | null, storedVerifier: string | null) {
     const cookieStore = await cookies();
 
@@ -101,24 +93,11 @@ export async function handleCallback(code: string | null, newState: string | nul
 
     const tokens = await tokenRequest(data);
 
-    cookieStore.set(TokenStorageNames.accessToken, tokens.access_token, cookieSettings);
-    cookieStore.set(TokenStorageNames.refreshToken, tokens.refresh_token, cookieSettings);
-    cookieStore.set(TokenStorageNames.expiration, getExpiration(tokens.expires_in), cookieSettings);
+    cookieStore.set(TokenStorageNames.accessToken, tokens.access_token, AuthCookieSettings);
+    cookieStore.set(TokenStorageNames.refreshToken, tokens.refresh_token, AuthCookieSettings);
+    cookieStore.set(TokenStorageNames.expiration, getExpiration(tokens.expires_in), AuthCookieSettings);
 
     return true;
-}
-
-export async function refreshIfExpired(req: NextRequest, res: NextResponse) {
-    const refreshToken = req.cookies.get(TokenStorageNames.refreshToken);
-    const expiration = req.cookies.get(TokenStorageNames.expiration);
-
-    if (refreshToken && expiration && pastExpiration(expiration.value)) {
-        const tokens = await refreshRequest(refreshToken.value);
-
-        res.cookies.set(TokenStorageNames.accessToken, tokens.access_token, cookieSettings);
-        res.cookies.set(TokenStorageNames.refreshToken, tokens.refresh_token, cookieSettings);
-        res.cookies.set(TokenStorageNames.expiration, getExpiration(tokens.expires_in), cookieSettings);
-    }
 }
 
 export async function refreshRequest(refreshToken: string) {
@@ -131,16 +110,37 @@ export async function refreshRequest(refreshToken: string) {
     return await tokenRequest(data);
 }
 
-export async function getAccessToken() {
-    const cookieStore = await cookies();
+export async function getAccessToken(req: NextRequest, res: NextResponse) {
+    let accessToken = req.cookies.get(TokenStorageNames.accessToken)?.value;
+    let refreshToken = req.cookies.get(TokenStorageNames.refreshToken)?.value;
+    let expiration = req.cookies.get(TokenStorageNames.expiration)?.value;
 
-    const accessToken = cookieStore.get(TokenStorageNames.accessToken);
-
-    if (!accessToken) {
-        throw new Error('access token not found');
+    if (!accessToken || !refreshToken || !expiration) {
+        throw new Error('cookies missing');
     }
 
-    return accessToken.value;
+    if (pastExpiration(expiration)) {
+        const tokens = await refreshRequest(refreshToken);
+
+        console.log(`UPDATING TOKENS - ${req.url} - ${accessToken.slice(-5)}`);
+
+        accessToken = tokens.access_token;
+        refreshToken = tokens.refresh_token;
+        expiration = getExpiration(tokens.expires_in);
+
+        /*res.cookies.set(TokenStorageNames.accessToken, tokens.access_token, cookieSettings);
+        res.cookies.set(TokenStorageNames.refreshToken, tokens.refresh_token, cookieSettings);
+        res.cookies.set(TokenStorageNames.expiration, getExpiration(tokens.expires_in), cookieSettings);*/
+
+        //res.headers.set('Authorization', `Bearer ${tokens.access_token}`);
+        console.log(`REFRESHED - ${req.url} - ${accessToken.slice(-5)}`)
+    } else {
+        console.log(`NOT REFRESHED - ${req.url} - ${accessToken.slice(-5)}`)
+    }
+
+    //res.headers.set('Authorization', `Bearer ${accessToken.value}`);
+
+    return [accessToken, refreshToken, expiration];
 }
 
 export async function revokeTokens() {

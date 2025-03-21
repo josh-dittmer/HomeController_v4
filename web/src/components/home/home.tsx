@@ -1,7 +1,6 @@
 'use client';
 
 import { GatewayProvider } from "@/contexts/gateway";
-import { GetMyProfileResponseT } from "hc_models/models";
 import { Lamp, LucideProps, Plus, Settings, Smartphone } from "lucide-react";
 import { motion } from "motion/react";
 import Link from "next/link";
@@ -27,16 +26,20 @@ function NavItem({ title, Icon }: { title: string, Icon: FC<LucideProps> }) {
     )
 }
 
-export default function Home({ res, children }: { res: GetMyProfileResponseT, children: ReactNode }) {
-    const { data } = useMyProfileQuery(res);
+export default function Home({ children }: { children: ReactNode }) {
+    const { data, isLoading } = useMyProfileQuery();
 
     const [addDeviceWindowVisible, setAddDeviceWindowVisible] = useState<boolean>(false);
     const [editUserWindowVisible, setEditUserWindowVisible] = useState<boolean>(false);
 
+    if (!data || isLoading) {
+        return <p>HOME LOADING...</p>
+    }
+
     if (!data.user) {
         return (
             <div className="animate-fade-in grid w-svw h-svh">
-                <CreateUserWindow email={res.email} />
+                <CreateUserWindow email={data.email} />
             </div>
         )
     }
