@@ -2,9 +2,9 @@
 
 import { isLeft } from 'fp-ts/lib/Either';
 import { cookies } from 'next/headers';
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest } from 'next/server';
 import { ClientId, Endpoints } from "../api/endpoints";
-import { AuthCookieSettings, createAuth, LoginUrlInfo, TokenResponse, TokenStorageNames } from "./util";
+import { AuthCookieSettings, createAuth, getExpiration, LoginUrlInfo, pastExpiration, TokenResponse, TokenStorageNames } from "./util";
 
 export async function createLoginUrl(clearSession: boolean): Promise<LoginUrlInfo> {
     const { state, verifier, challenge } = await createAuth();
@@ -62,15 +62,6 @@ async function revokeRequest(data: object) {
     }
 }
 
-function pastExpiration(expiration: string): boolean {
-    return Date.now() >= Number.parseInt(expiration);
-}
-
-function getExpiration(expiresIn: number) {
-    const expr = Date.now() + expiresIn * 1000;
-    return expr.toString();
-}
-
 export async function handleCallback(code: string | null, newState: string | null, storedState: string | null, storedVerifier: string | null) {
     const cookieStore = await cookies();
 
@@ -104,13 +95,13 @@ export async function refreshRequest(refreshToken: string) {
     const data = {
         grant_type: 'refresh_token',
         client_id: ClientId,
-        refresh_token: refreshToken
+        refresh_token: refreshToken,
     };
 
     return await tokenRequest(data);
 }
 
-export async function getAccessToken(req: NextRequest, res: NextResponse) {
+export async function getTokens(req: NextRequest) {
     let accessToken = req.cookies.get(TokenStorageNames.accessToken)?.value;
     let refreshToken = req.cookies.get(TokenStorageNames.refreshToken)?.value;
     let expiration = req.cookies.get(TokenStorageNames.expiration)?.value;
@@ -127,20 +118,13 @@ export async function getAccessToken(req: NextRequest, res: NextResponse) {
         accessToken = tokens.access_token;
         refreshToken = tokens.refresh_token;
         expiration = getExpiration(tokens.expires_in);
-
-        /*res.cookies.set(TokenStorageNames.accessToken, tokens.access_token, cookieSettings);
-        res.cookies.set(TokenStorageNames.refreshToken, tokens.refresh_token, cookieSettings);
-        res.cookies.set(TokenStorageNames.expiration, getExpiration(tokens.expires_in), cookieSettings);*/
-
-        //res.headers.set('Authorization', `Bearer ${tokens.access_token}`);
-        console.log(`REFRESHED - ${req.url} - ${accessToken.slice(-5)}`)
-    } else {
-        console.log(`NOT REFRESHED - ${req.url} - ${accessToken.slice(-5)}`)
     }
 
-    //res.headers.set('Authorization', `Bearer ${accessToken.value}`);
-
-    return [accessToken, refreshToken, expiration];
+    return {
+        accessToken: accessToken,
+        refreshToken: refreshToken,
+        expiration: expiration
+    };
 }
 
 export async function revokeTokens() {

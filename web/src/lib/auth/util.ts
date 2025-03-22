@@ -29,6 +29,15 @@ export const AuthCookieSettings: Partial<ResponseCookie> = {
     path: '/'
 };
 
+export function pastExpiration(expiration: string): boolean {
+    return Date.now() >= Number.parseInt(expiration);
+}
+
+export function getExpiration(expiresIn: number) {
+    const expr = Date.now() + expiresIn * 1000;
+    return expr.toString();
+}
+
 function base64UrlEncode(a: ArrayBuffer) {
     let str = '';
     const bytes = new Uint8Array(a);

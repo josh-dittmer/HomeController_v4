@@ -12,13 +12,15 @@ interface JothJwtPayload extends JwtPayload {
 export function verifyJothJwt(token: string): JothJwtPayload {
     const data = <JothJwtPayload>jwt.verify(token, publicKey, { algorithms: ['RS256'] });
 
-    if (!data.sub || !data.scope || !data.email) {
+    console.log(data);
+
+    if (!data.sub /*|| !data.scope*/ || !data.email) {
         throw new Error('malformed jwt');
     }
 
-    if (data.scope !== 'app_access') {
+    /*if (data.scope !== 'app_access') {
         throw new Error('bad scope');
-    }
+    }*/
 
     return data;
 }
