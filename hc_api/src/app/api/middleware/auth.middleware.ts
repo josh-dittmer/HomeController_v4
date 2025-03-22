@@ -14,7 +14,6 @@ export class AuthMiddleware implements NestMiddleware {
         }
 
         const token = req.headers.authorization.substring(7);
-        console.log(token);
 
         try {
             const data = verifyJothJwt(token);
