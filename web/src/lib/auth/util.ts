@@ -24,19 +24,13 @@ export const TokenStorageNames = {
     expiration: 'expiration',
 };
 
-export const TokenLifetimes = {
-    accessToken: parseInt(process.env.ACCESS_TOKEN_LIFETIME!) - 3 /* account for possible latency */,
-    refreshToken: parseInt(process.env.REFRESH_TOKEN_LIFETIME!)
-}
-
 export const ClientId = process.env.NEXT_PUBLIC_CLIENT_ID!;
 
-export const authCookieSettings = (maxAge: number): Partial<ResponseCookie> => ({
+export const authCookieOptions = (): Partial<ResponseCookie> => ({
     secure: process.env.NODE_ENV !== 'development',
     httpOnly: true,
     path: '/',
     sameSite: 'strict',
-    //maxAge: maxAge
 });
 
 export async function createLoginUrl(clearSession: boolean): Promise<LoginUrlInfo> {

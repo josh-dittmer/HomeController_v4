@@ -1,6 +1,6 @@
 import { Endpoints } from "@/lib/api/endpoints";
 import { useQueryClient } from "@tanstack/react-query";
-import { ClientToServerEvents, ServerToClientEvents, UserCheckStateReplyData, UserDeviceConnectedData, UserDeviceDisconnectedData, UserStateChangedData } from "hc_models/types";
+import { ClientToServerEvents, ServerToClientEvents, UserCheckStateReplyData, UserStateChangedData } from "hc_models/types";
 import { createContext, ReactNode, useEffect, useRef, useState } from "react";
 import { io, Socket } from "socket.io-client";
 
@@ -77,20 +77,20 @@ export function GatewayProvider({ ticket, children }: { ticket: string, children
             }
         });
 
-        socketInst.current.on('userDeviceConnected', (msg: UserDeviceConnectedData) => {
+        /*socketInst.current.on('userDeviceConnected', (msg: UserDeviceConnectedData) => {
             //client.invalidateQueries({ queryKey: allDevicesKey() });
             //client.invalidateQueries({ queryKey: oneDeviceKey(msg.deviceId) });
         });
-
+        
         socketInst.current.on('userDeviceDisconnected', (msg: UserDeviceDisconnectedData) => {
             //client.invalidateQueries({ queryKey: allDevicesKey() });
             //client.invalidateQueries({ queryKey: oneDeviceKey(msg.deviceId) });
-        });
+        });*/
 
         return () => {
             socketInst.current?.disconnect();
         }
-    }, [client]);
+    }, [client, ticket]);
 
     return (
         <GatewayContext.Provider
