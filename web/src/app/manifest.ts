@@ -5,7 +5,7 @@ export default function manifest(): MetadataRoute.Manifest {
         name: 'HomeController',
         short_name: 'HC',
         description: 'Control your homebrew IoT devices!',
-        start_url: '/login',
+        start_url: '/home',
         display: 'standalone',
         background_color: '#424141',
         theme_color: '#2c2c2c',
