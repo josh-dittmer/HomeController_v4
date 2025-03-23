@@ -9,7 +9,7 @@ import ThemeToggle from "../theme_toggle/theme_toggle";
 import AddDeviceWindow from "../windows/device/add";
 import EditUserWindow from "../windows/user/edit";
 
-import { useMyProfileQuery } from "@/lib/queries/my_profile";
+import { GetMyProfileResponseT, TicketResponseT } from "hc_models/models";
 import CreateUserWindow from "../windows/user/create";
 import './css/home.css';
 
@@ -26,20 +26,14 @@ function NavItem({ title, Icon }: { title: string, Icon: FC<LucideProps> }) {
     )
 }
 
-export default function Home({ children }: { children: ReactNode }) {
-    const { data, isLoading } = useMyProfileQuery();
-
+export default function Home({ profileRes, ticketRes, children }: { profileRes: GetMyProfileResponseT, ticketRes: TicketResponseT, children: ReactNode }) {
     const [addDeviceWindowVisible, setAddDeviceWindowVisible] = useState<boolean>(false);
     const [editUserWindowVisible, setEditUserWindowVisible] = useState<boolean>(false);
 
-    if (!data || isLoading) {
-        return <p>HOME LOADING...</p>
-    }
-
-    if (!data.user) {
+    if (!profileRes.user) {
         return (
             <div className="animate-fade-in grid w-svw h-svh">
-                <CreateUserWindow email={data.email} />
+                <CreateUserWindow email={profileRes.email} />
             </div>
         )
     }
@@ -68,7 +62,7 @@ export default function Home({ children }: { children: ReactNode }) {
                     </button>
                 </div>
                 <div className="">
-                    <GatewayProvider>
+                    <GatewayProvider ticket={ticketRes.ticket}>
                         {children}
                     </GatewayProvider>
                 </div>
@@ -77,7 +71,7 @@ export default function Home({ children }: { children: ReactNode }) {
                 <p className="text-xs text-fg-medium">HomeController v4 <span className="text-fg-dark bg-red-600 rounded">Alpha</span> | <a href="https://github.com/josh-dittmer/HomeController_v4" className="underline">GitHub</a></p>
             </div>
             <AddDeviceWindow visible={addDeviceWindowVisible} setVisible={setAddDeviceWindowVisible} />
-            <EditUserWindow visible={editUserWindowVisible} setVisible={setEditUserWindowVisible} user={data.user} />
+            <EditUserWindow visible={editUserWindowVisible} setVisible={setEditUserWindowVisible} user={profileRes.user} />
         </div>
     )
 }

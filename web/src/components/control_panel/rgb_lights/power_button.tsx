@@ -20,8 +20,8 @@ export default function PowerButton({ enabled, ctx, deviceId, powered, width, he
     return (
         <motion.button
             className={`${powered ? 'bg-bg-accent' : 'bg-bg-light'} rounded-full p-3`}
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
+            //initial={{ scale: 0.75 }}
+            //animate={{ scale: 1 }}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.96 }}
             onClick={togglePower}

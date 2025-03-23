@@ -94,6 +94,7 @@ export class DeviceController {
     async edit(@Req() req: Request, @Res() res: Response, @Param('id') id: string) {
         const decoded = EditDeviceRequest.decode(req.body);
         if (isLeft(decoded)) {
+            console.log(req.body);
             return badRequest(res);
         }
 

@@ -2,6 +2,7 @@
 
 import { GatewayContextType } from "@/contexts/gateway";
 import { Commands } from "@/lib/api/device_data/rgb_lights";
+import { motion } from 'motion/react';
 import { ColorResult, HuePicker } from "react-color";
 
 export default function ColorPicker({ ctx, deviceId, r, g, b }: { ctx: GatewayContextType | null, deviceId: string, r: number, g: number, b: number }) {
@@ -10,8 +11,12 @@ export default function ColorPicker({ ctx, deviceId, r, g, b }: { ctx: GatewayCo
     }
 
     return (
-        <div className="p-4">
+        <motion.div
+            //initial={{ scale: 0.9 }}
+            //animate={{ scale: 1 }}
+            className="p-4"
+        >
             <HuePicker width={'175px'} color={{ r, g, b }} onChange={handleChange} />
-        </div>
+        </motion.div>
     )
 }

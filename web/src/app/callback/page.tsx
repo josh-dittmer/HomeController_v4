@@ -1,11 +1,12 @@
 'use client';
 
 import LoadingSpinner from "@/components/loading_spinner/loading_spinner";
-import { handleCallback } from "@/lib/auth/actions";
 import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect } from "react";
+import { handleCallbackOnServer } from "./actions";
+
 
 export default function CallbackPage() {
     const router = useRouter();
@@ -23,7 +24,7 @@ export default function CallbackPage() {
             sessionStorage.removeItem('state');
             sessionStorage.removeItem('verifier');
 
-            return handleCallback(code, newState, storedState, storedVerifier);
+            return handleCallbackOnServer(code, newState, storedState, storedVerifier);
         },
         staleTime: Infinity,
         retry: false

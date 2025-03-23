@@ -1,18 +1,13 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { EditUserRequestT } from "hc_models/models";
-import { editUser } from "../api/actions";
-import { myProfileKey } from "../queries/my_profile";
+import { editUserOnServer } from "./actions";
 
 export const editUserKey = () => ['edit_user'];
 
-export const useEditUserMutation = () => {
-    const client = useQueryClient();
-
-    return useMutation({
-        mutationFn: (vars: EditUserRequestT) => editUser(vars),
-        mutationKey: editUserKey(),
-        onSuccess: () => {
-            client.invalidateQueries({ queryKey: myProfileKey() });
-        }
-    });
-}
+export const useEditUserMutation = () => useMutation({
+    mutationFn: (vars: EditUserRequestT) => editUserOnServer(vars),
+    mutationKey: editUserKey(),
+    onSuccess: () => {
+        //client.invalidateQueries({ queryKey: myProfileKey() });
+    }
+});

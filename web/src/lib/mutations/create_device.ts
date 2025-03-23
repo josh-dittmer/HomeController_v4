@@ -1,18 +1,13 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { CreateDeviceRequestT } from "hc_models/models";
-import { createDevice } from "../api/actions";
-import { allDevicesKey } from "../queries/all_devices";
+import { createDeviceOnServer } from "./actions";
 
 export const createDeviceKey = () => ['create_device'];
 
-export const useCreateDeviceMutation = () => {
-    const client = useQueryClient();
-
-    return useMutation({
-        mutationFn: (vars: CreateDeviceRequestT) => createDevice(vars),
-        mutationKey: createDeviceKey(),
-        onSuccess: () => {
-            client.invalidateQueries({ queryKey: allDevicesKey() })
-        }
-    })
-};
+export const useCreateDeviceMutation = () => useMutation({
+    mutationFn: (vars: CreateDeviceRequestT) => createDeviceOnServer(vars),
+    mutationKey: createDeviceKey(),
+    onSuccess: () => {
+        //client.invalidateQueries({ queryKey: allDevicesKey() })
+    }
+});

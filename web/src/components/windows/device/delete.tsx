@@ -3,14 +3,14 @@
 import Button from "@/components/ui/button";
 import Text from "@/components/ui/text";
 import Window, { WindowFooter, WindowSpacer } from "@/components/ui/window";
-import { deleteDevice } from "@/lib/api/actions";
+import { useDeleteDeviceMutation } from "@/lib/mutations/delete_device";
 import { DeviceT } from "hc_models/models";
 import { Trash } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction } from "react";
 
 export default function DeleteDeviceWindow({ visible, setVisible, device }: { visible: boolean, setVisible: Dispatch<SetStateAction<boolean>>, device: DeviceT }) {
-    const [deleted, setDeleted] = useState<boolean>(false);
+    const { mutate, isPending } = useDeleteDeviceMutation(device.deviceId);
 
     const router = useRouter();
 
@@ -24,9 +24,8 @@ export default function DeleteDeviceWindow({ visible, setVisible, device }: { vi
                     <Button title="Cancel" valid={true} cn="bg-bg-medium text-fg-dark" onClick={() => {
                         setVisible(false);
                     }} />
-                    <Button title="Delete" valid={!deleted} cn="bg-red-600 text-fg-accent" onClick={async () => {
-                        setDeleted(true);
-                        await deleteDevice(device.deviceId);
+                    <Button title="Delete" valid={!isPending} cn="bg-red-600 text-fg-accent" onClick={async () => {
+                        mutate();
                         router.push('/home');
                     }} />
                 </WindowFooter>

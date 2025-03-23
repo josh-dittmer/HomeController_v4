@@ -1,5 +1,6 @@
 import * as t from 'io-ts';
 import { ResponseCookie } from 'next/dist/compiled/@edge-runtime/cookies';
+import { ClientId, Endpoints } from '../api/endpoints';
 
 export type LoginUrlInfo = {
     url: string,
@@ -28,6 +29,29 @@ export const AuthCookieSettings: Partial<ResponseCookie> = {
     httpOnly: true,
     path: '/'
 };
+
+export async function createLoginUrl(clearSession: boolean): Promise<LoginUrlInfo> {
+    const { state, verifier, challenge } = await createAuth();
+
+    const url = new URL(`${Endpoints.authApiPublic}/oauth2/authorize`);
+    url.searchParams.set('client_id', ClientId);
+    url.searchParams.set('redirect_uri', Endpoints.callbackUrl);
+    url.searchParams.set('response_type', 'code');
+    url.searchParams.set('scope', 'app_access');
+    url.searchParams.set('state', state);
+    url.searchParams.set('code_challenge', challenge);
+    url.searchParams.set('code_challenge_method', 'S256');
+
+    if (clearSession) {
+        url.searchParams.set('clear_session', '1');
+    }
+
+    return {
+        url: url.href,
+        state: state,
+        verifier: verifier
+    }
+}
 
 export function pastExpiration(expiration: string): boolean {
     return Date.now() >= Number.parseInt(expiration);

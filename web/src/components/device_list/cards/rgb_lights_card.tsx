@@ -52,7 +52,7 @@ export function RGBLightsCard({ device }: { device: DeviceT }) {
                 {state && !loading && (
                     <motion.p
                         className="text-xs text-fg-medium"
-                        initial={{ scale: 0 }}
+                        initial={{ scale: 0.9 }}
                         animate={{ scale: 1 }}
                     >
                         ONLINE, POWERED {state.powered ? 'ON' : 'OFF'}

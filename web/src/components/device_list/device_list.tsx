@@ -1,19 +1,12 @@
 'use client';
 
-import { useAllDevicesQuery } from "@/lib/queries/all_devices";
-import { DeviceT } from "hc_models/models";
+import { DeviceT, GetAllDevicesResponseT } from "hc_models/models";
 import { OfflineDeviceCard } from "./cards/offline_card";
 import { RGBLightsCard } from "./cards/rgb_lights_card";
 
-export default function DeviceList() {
-    const { data, isLoading } = useAllDevicesQuery();
-
-    const hasOnlineDevice = data && data.onlineDevices.length > 0;
-    const hasOfflineDevice = data && data.offlineDevices.length > 0;
-
-    if (!data || isLoading) {
-        return <p>DEVICE LIST LOADING...</p>
-    }
+export default function DeviceList({ res }: { res: GetAllDevicesResponseT }) {
+    const hasOnlineDevice = res.onlineDevices.length > 0;
+    const hasOfflineDevice = res.offlineDevices.length > 0;
 
     return (
         <div className="p-4 overflow-y-scroll h-[calc(100svh-80px)]">
@@ -25,10 +18,10 @@ export default function DeviceList() {
             {hasOnlineDevice && (
                 <>
                     <div className="w-full pb-1 border-bg-dark flex justify-center sm:justify-start">
-                        <p className="text-xs text-fg-medium">ONLINE DEVICES ({data.onlineDevices.length})</p>
+                        <p className="text-xs text-fg-medium">ONLINE DEVICES ({res.onlineDevices.length})</p>
                     </div>
                     <div className="flex flex-wrap justify-center sm:justify-start gap-4">
-                        {data.onlineDevices.map((device: DeviceT) =>
+                        {res.onlineDevices.map((device: DeviceT) =>
                             <div key={device.deviceId} className="pt-4">
                                 {device.type === 'rgb_lights' ? (
                                     <RGBLightsCard key={device.deviceId} device={device} />
@@ -47,10 +40,10 @@ export default function DeviceList() {
             {hasOfflineDevice && (
                 <>
                     <div className="w-full pb-1 border-bg-dark flex justify-center sm:justify-start">
-                        <p className="text-xs text-fg-medium">OFFLINE DEVICES ({data.offlineDevices.length})</p>
+                        <p className="text-xs text-fg-medium">OFFLINE DEVICES ({res.offlineDevices.length})</p>
                     </div>
                     <div className="flex flex-wrap justify-center sm:justify-start gap-4">
-                        {data.offlineDevices.map((device: DeviceT) =>
+                        {res.offlineDevices.map((device: DeviceT) =>
                             <div key={device.deviceId} className="pt-4">
                                 <OfflineDeviceCard device={device} />
                             </div>

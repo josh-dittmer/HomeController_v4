@@ -1,7 +1,4 @@
-import { getTicket } from "@/lib/api/actions";
 import { Endpoints } from "@/lib/api/endpoints";
-import { allDevicesKey } from "@/lib/queries/all_devices";
-import { oneDeviceKey } from "@/lib/queries/one_device";
 import { useQueryClient } from "@tanstack/react-query";
 import { ClientToServerEvents, ServerToClientEvents, UserCheckStateReplyData, UserDeviceConnectedData, UserDeviceDisconnectedData, UserStateChangedData } from "hc_models/types";
 import { createContext, ReactNode, useEffect, useRef, useState } from "react";
@@ -23,7 +20,7 @@ export type GatewayContextType = {
 
 export const GatewayContext = createContext<GatewayContextType | null>(null);
 
-export function GatewayProvider({ children }: { children: ReactNode }) {
+export function GatewayProvider({ ticket, children }: { ticket: string, children: ReactNode }) {
     const client = useQueryClient();
 
     const socketInst = useRef<Socket<ServerToClientEvents, ClientToServerEvents> | null>(null);
@@ -56,10 +53,9 @@ export function GatewayProvider({ children }: { children: ReactNode }) {
         socketInst.current = io(Endpoints.mainApiPublicUrl, {
             path: `${Endpoints.mainApiPrefix}/gateway`,
             auth: async (cb) => {
-                const res = await getTicket();
                 cb({
                     type: 'user',
-                    key: res.ticket
+                    key: ticket
                 })
             }
         });
@@ -82,13 +78,13 @@ export function GatewayProvider({ children }: { children: ReactNode }) {
         });
 
         socketInst.current.on('userDeviceConnected', (msg: UserDeviceConnectedData) => {
-            client.invalidateQueries({ queryKey: allDevicesKey() });
-            client.invalidateQueries({ queryKey: oneDeviceKey(msg.deviceId) });
+            //client.invalidateQueries({ queryKey: allDevicesKey() });
+            //client.invalidateQueries({ queryKey: oneDeviceKey(msg.deviceId) });
         });
 
         socketInst.current.on('userDeviceDisconnected', (msg: UserDeviceDisconnectedData) => {
-            client.invalidateQueries({ queryKey: allDevicesKey() });
-            client.invalidateQueries({ queryKey: oneDeviceKey(msg.deviceId) });
+            //client.invalidateQueries({ queryKey: allDevicesKey() });
+            //client.invalidateQueries({ queryKey: oneDeviceKey(msg.deviceId) });
         });
 
         return () => {

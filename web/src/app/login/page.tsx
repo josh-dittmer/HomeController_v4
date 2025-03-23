@@ -1,7 +1,7 @@
 'use client';
 
 import LoadingSpinner from "@/components/loading_spinner/loading_spinner";
-import { createLoginUrl } from "@/lib/auth/actions";
+import { createLoginUrl } from "@/lib/auth/util";
 import { useQuery } from "@tanstack/react-query";
 import { useSearchParams } from "next/navigation";
 import { useEffect } from "react";
@@ -29,7 +29,7 @@ export default function LoginPage() {
 
     return (
         <div className="flex justify-center items-center h-svh w-svw">
-            <LoadingSpinner text="Redirecting to Joth..." />
+            <LoadingSpinner text="Redirecting to Joth...." />
         </div>
     )
 }
