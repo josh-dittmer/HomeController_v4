@@ -1,6 +1,6 @@
 import * as t from 'io-ts';
 import { ResponseCookie } from 'next/dist/compiled/@edge-runtime/cookies';
-import { ClientId, Endpoints } from '../api/endpoints';
+import { Endpoints } from '../api/endpoints';
 
 export type LoginUrlInfo = {
     url: string,
@@ -24,11 +24,20 @@ export const TokenStorageNames = {
     expiration: 'expiration',
 };
 
-export const AuthCookieSettings: Partial<ResponseCookie> = {
+export const TokenLifetimes = {
+    accessToken: parseInt(process.env.ACCESS_TOKEN_LIFETIME!) - 3 /* account for possible latency */,
+    refreshToken: parseInt(process.env.REFRESH_TOKEN_LIFETIME!)
+}
+
+export const ClientId = process.env.NEXT_PUBLIC_CLIENT_ID!;
+
+export const authCookieSettings = (maxAge: number): Partial<ResponseCookie> => ({
     secure: process.env.NODE_ENV !== 'development',
     httpOnly: true,
-    path: '/'
-};
+    path: '/',
+    sameSite: 'strict',
+    //maxAge: maxAge
+});
 
 export async function createLoginUrl(clearSession: boolean): Promise<LoginUrlInfo> {
     const { state, verifier, challenge } = await createAuth();
@@ -45,6 +54,8 @@ export async function createLoginUrl(clearSession: boolean): Promise<LoginUrlInf
     if (clearSession) {
         url.searchParams.set('clear_session', '1');
     }
+
+    console.log(url.href);
 
     return {
         url: url.href,

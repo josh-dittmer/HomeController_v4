@@ -9,8 +9,7 @@ import ThemeToggle from "../theme_toggle/theme_toggle";
 import AddDeviceWindow from "../windows/device/add";
 import EditUserWindow from "../windows/user/edit";
 
-import { GetMyProfileResponseT, TicketResponseT } from "hc_models/models";
-import CreateUserWindow from "../windows/user/create";
+import { TicketResponseT, UserT } from "hc_models/models";
 import './css/home.css';
 
 function NavItem({ title, Icon }: { title: string, Icon: FC<LucideProps> }) {
@@ -26,17 +25,9 @@ function NavItem({ title, Icon }: { title: string, Icon: FC<LucideProps> }) {
     )
 }
 
-export default function Home({ profileRes, ticketRes, children }: { profileRes: GetMyProfileResponseT, ticketRes: TicketResponseT, children: ReactNode }) {
+export default function Home({ user, ticketRes, children }: { user: UserT, ticketRes: TicketResponseT, children: ReactNode }) {
     const [addDeviceWindowVisible, setAddDeviceWindowVisible] = useState<boolean>(false);
     const [editUserWindowVisible, setEditUserWindowVisible] = useState<boolean>(false);
-
-    if (!profileRes.user) {
-        return (
-            <div className="animate-fade-in grid w-svw h-svh">
-                <CreateUserWindow email={profileRes.email} />
-            </div>
-        )
-    }
 
     return (
         <div className="animate-fade-in grid w-svw h-svh grid-rows-[60px_1fr_20px]">
@@ -71,7 +62,7 @@ export default function Home({ profileRes, ticketRes, children }: { profileRes: 
                 <p className="text-xs text-fg-medium">HomeController v4 <span className="text-fg-dark bg-red-600 rounded">Alpha</span> | <a href="https://github.com/josh-dittmer/HomeController_v4" className="underline">GitHub</a></p>
             </div>
             <AddDeviceWindow visible={addDeviceWindowVisible} setVisible={setAddDeviceWindowVisible} />
-            <EditUserWindow visible={editUserWindowVisible} setVisible={setEditUserWindowVisible} user={profileRes.user} />
+            <EditUserWindow visible={editUserWindowVisible} setVisible={setEditUserWindowVisible} user={user} />
         </div>
     )
 }

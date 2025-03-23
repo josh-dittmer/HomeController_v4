@@ -1,8 +1,9 @@
 import { isLeft } from 'fp-ts/lib/Either';
+import jwt, { JwtPayload } from 'jsonwebtoken';
 import { ReadonlyRequestCookies } from 'next/dist/server/web/spec-extension/adapters/request-cookies';
-import { ClientId, Endpoints } from "../api/endpoints";
+import { Endpoints } from "../api/endpoints";
 import { deleteAuthCookies, getRefreshToken, setAuthCookies } from './cookies';
-import { getExpiration, pastExpiration, TokenResponse } from "./util";
+import { ClientId, TokenResponse } from "./util";
 
 async function tokenRequest(data: object) {
     const response = await fetch(`${Endpoints.authApiInternal}/oauth2/token`, {
@@ -47,50 +48,61 @@ export async function handleCallback(cookieStore: ReadonlyRequestCookies, code: 
     }
 
     const data = {
-        grant_type: 'authorization_code',
-        code: code,
-        client_id: ClientId,
-        client_secret: null,
-        redirect_uri: Endpoints.callbackUrl,
-        code_verifier: storedVerifier
+        'grant_type': 'authorization_code',
+        'code': code,
+        'client_id': ClientId,
+        'client_secret': null,
+        'redirect_uri': Endpoints.callbackUrl,
+        'code_verifier': storedVerifier
     };
 
     const tokens = await tokenRequest(data);
 
-    setAuthCookies(cookieStore, tokens.access_token, tokens.refresh_token, tokens.expires_in);
+    setAuthCookies(cookieStore, tokens['access_token'], tokens['refresh_token']);
 
     return true;
 }
 
 export async function refreshRequest(refreshToken: string) {
     const data = {
-        grant_type: 'refresh_token',
-        client_id: ClientId,
-        refresh_token: refreshToken,
+        'grant_type': 'refresh_token',
+        'client_id': ClientId,
+        'refresh_token': refreshToken,
     };
 
     return await tokenRequest(data);
 }
 
-export async function refreshTokens(accessToken: string | undefined, refreshToken: string | undefined, expiration: string | undefined) {
-    if (!accessToken || !refreshToken || !expiration) {
-        throw new Error('cookies missing');
+export async function refreshTokens(accessToken: string | undefined, refreshToken: string | undefined): Promise<{ accessToken: string, refreshToken: string }> {
+    if (!refreshToken) {
+        throw new Error('refresh token missing');
     }
 
-    if (pastExpiration(expiration)) {
+    let tokenExpired = true;
+
+    if (accessToken) {
+        const data = <JwtPayload>jwt.decode(accessToken);
+
+        //console.log(`${data.exp} ${Date.now()}`)
+        if (data.exp && data.exp > Date.now() / 1000) {
+            tokenExpired = false;
+        }
+    }
+
+    if (tokenExpired) {
         const tokens = await refreshRequest(refreshToken);
 
-        console.log(`UPDATING TOKENS - ${refreshToken.slice(-5)} -> ${accessToken.slice(-5)} -> ${tokens.refresh_token.slice(-5)}`);
+        console.log('Tokens refreshed!');
+        //console.log(`UPDATING TOKENS - ${refreshToken.slice(-5)} -> ${accessToken.slice(-5)} -> ${tokens.refresh_token.slice(-5)}`);
 
         accessToken = tokens.access_token;
-        refreshToken = tokens.refresh_token;
-        expiration = getExpiration(tokens.expires_in);
+        refreshToken = tokens['refresh_token'];
+        //expiration = getExpiration(tokens.expires_in);
     }
 
     return {
-        accessToken: accessToken,
-        refreshToken: refreshToken,
-        expiration: expiration
+        accessToken: accessToken!,
+        refreshToken: refreshToken
     };
 }
 
@@ -101,10 +113,10 @@ export async function revokeTokens(cookieStore: ReadonlyRequestCookies) {
 
     if (refreshToken) {
         await revokeRequest({
-            token: refreshToken,
-            token_type_hint: 'refresh_token',
-            client_id: ClientId,
-            client_secret: null
+            'token': refreshToken,
+            'token_type_hint': 'refresh_token',
+            'client_id': ClientId,
+            'client_secret': null
         });
     }
 }

@@ -1,3 +1,5 @@
+'use client';
+
 import Button from "@/components/ui/button";
 import TextBox from "@/components/ui/textbox";
 import Window, { WindowFooter, WindowFooterStart, WindowSpacer } from "@/components/ui/window";
@@ -27,7 +29,7 @@ export default function CreateUserWindow({ email }: { email: string }) {
                         >
                             <div className="flex items-center gap-1 text-fg-medium">
                                 <LogOut width={15} height={15} />
-                                <p className="text-sm ">{email}</p>
+                                <p className="text-sm max-w-32 truncate">{email}</p>
                             </div>
                         </button>
                     </WindowFooterStart>

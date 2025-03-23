@@ -6,6 +6,20 @@ import { redirect } from "next/navigation";
 import { createDevice, createUser, deleteDevice, editDevice, editUser } from "../api/requests";
 import { getAccessToken } from "../auth/cookies";
 
+/*async function _getAccessToken(cookieStore: ReadonlyRequestCookies) {
+    let currAccessToken = cookieStore.get(TokenStorageNames.accessToken)?.value ?? '';
+    let currRefreshToken = cookieStore.get(TokenStorageNames.refreshToken)?.value;
+    let currExpiration = cookieStore.get(TokenStorageNames.expiration)?.value;
+
+    const { accessToken, refreshToken, expiration } = await refreshTokens(currAccessToken, currRefreshToken, currExpiration);
+
+    cookieStore.set(TokenStorageNames.accessToken, accessToken, AuthCookieSettings);
+    cookieStore.set(TokenStorageNames.refreshToken, refreshToken, AuthCookieSettings);
+    cookieStore.set(TokenStorageNames.expiration, expiration, AuthCookieSettings);
+
+    return accessToken;
+}*/
+
 export async function createDeviceOnServer(req: CreateDeviceRequestT) {
     const accessToken = getAccessToken(await cookies());
     return createDevice(accessToken, req);
@@ -19,6 +33,7 @@ export async function createUserOnServer(req: CreateUserRequestT) {
 export async function deleteDeviceOnServer(deviceId: string) {
     const accessToken = getAccessToken(await cookies());
     deleteDevice(accessToken, deviceId);
+
     redirect('/home');
 }
 
