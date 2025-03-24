@@ -7,8 +7,8 @@ import { NextRequest, NextResponse } from "next/server";
 
 const AllowedPaths: Record<string, string[]> = {
     'GET': ['/ticket'],
-    'POST': ['/device/create', '/device/(.*)/edit', '/user/create'],
-    'DELETE': ['/device/(.*)/delete', '/user/edit']
+    'POST': ['/device/create', '/device/(.*)/edit', '/user/create', '/user/edit'],
+    'DELETE': ['/device/(.*)/delete']
 };
 
 const Versions: Record<string, string> = {

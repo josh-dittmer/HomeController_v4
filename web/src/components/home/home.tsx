@@ -59,7 +59,7 @@ export default function Home({ user, ticketRes, children }: { user: UserT, ticke
                 </div>
             </div>
             <div className="pl-2 flex items-center bg-bg-dark">
-                <p className="text-xs text-fg-medium">HomeController v4 <span className="text-fg-dark bg-red-600 rounded">Alpha</span> | <a href="https://github.com/josh-dittmer/HomeController_v4" className="underline">GitHub</a></p>
+                <p className="text-xs text-fg-medium">HomeController v4 <span className="text-fg-dark bg-red-600 rounded">Alpha</span> | <a href="https://github.com/josh-dittmer/HomeController_v4" target="_blank" className="underline">GitHub</a></p>
             </div>
             <AddDeviceWindow visible={addDeviceWindowVisible} setVisible={setAddDeviceWindowVisible} />
             <EditUserWindow visible={editUserWindowVisible} setVisible={setEditUserWindowVisible} user={user} />
