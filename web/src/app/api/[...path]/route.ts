@@ -16,7 +16,6 @@ const Versions: Record<string, string> = {
 };
 
 async function handler(request: NextRequest, { params }: { params: Promise<{ path: string[] }> }) {
-
     return proxyRequest(
         request.method,
         (await params).path,
