@@ -2,6 +2,7 @@ import { isLeft } from 'fp-ts/lib/Either';
 import { CreateDeviceRequestT, CreateDeviceResponse, CreateDeviceResponseT, CreateUserRequestT, EditDeviceRequestT, EditUserRequestT, GetAllDevicesResponse, GetAllDevicesResponseT, GetMyProfileResponse, GetOneDeviceResponse, GetOneDeviceResponseT, TicketResponse, TicketResponseT } from "hc_models/models";
 import * as t from 'io-ts';
 import { PathReporter } from 'io-ts/PathReporter';
+import { redirect } from 'next/navigation';
 import { Endpoints } from './endpoints';
 import { deleteReq, getReq, postReq } from './util';
 
@@ -12,7 +13,8 @@ export async function request(url: string, data: RequestInit, accessToken: strin
     const response = await fetch(url, data);
 
     if (response.status === 401) {
-        throw new Error('auth failed');
+        redirect('/login');
+        //throw new Error('auth failed');
     } else if (response.status !== 200 && response.status !== 201) {
         throw new Error('request failed');
     }
