@@ -13,7 +13,7 @@ export async function middleware(req: NextRequest) {
 
         res.cookies.set(TokenStorageNames.accessToken, accessToken, authCookieOptions());
         res.cookies.set(TokenStorageNames.refreshToken, refreshToken, authCookieOptions());
-    } catch (e) {
+    } catch {
         return NextResponse.redirect(new URL('/login', req.url))
     }
 
