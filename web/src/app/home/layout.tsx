@@ -2,7 +2,7 @@ import { ReactNode } from "react";
 
 import Home from "@/components/home/home";
 import CreateUserWindow from "@/components/windows/user/create";
-import { getMyProfile, getTicket } from "@/lib/api/requests";
+import { getMyProfile } from "@/lib/api/requests";
 import { getAccessToken } from "@/lib/auth/cookies";
 import { cookies } from "next/headers";
 
@@ -19,10 +19,10 @@ export default async function HomeLayout({ children }: { children: ReactNode }) 
         )
     }
 
-    const ticketRes = await getTicket(accessToken);
+    //const ticketRes = await getTicket(accessToken);
 
     return (
-        <Home user={profileRes.user} ticketRes={ticketRes}>
+        <Home user={profileRes.user} ticketRes={{ ticket: '' }}>
             {children}
         </Home>
     )

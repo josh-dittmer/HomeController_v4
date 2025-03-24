@@ -79,9 +79,11 @@ export async function refreshTokens(accessToken: string | undefined, refreshToke
     }
 
     let tokenExpired = true;
+    let userId = '?'; // for logging
 
     if (accessToken) {
         const data = <JwtPayload>jwt.decode(accessToken);
+        userId = data.sub ?? '';
 
         if (data.exp && data.exp > Date.now() / 1000) {
             tokenExpired = false;
@@ -91,7 +93,7 @@ export async function refreshTokens(accessToken: string | undefined, refreshToke
     if (tokenExpired) {
         const tokens = await refreshRequest(refreshToken);
 
-        console.log('Tokens refreshed!');
+        console.log(`Tokens refreshed for [${userId}]`);
 
         accessToken = tokens['access_token'];
         refreshToken = tokens['refresh_token'];

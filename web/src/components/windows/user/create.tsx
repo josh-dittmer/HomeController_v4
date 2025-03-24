@@ -10,7 +10,7 @@ import { useState } from "react";
 import { logout } from "./actions";
 
 export default function CreateUserWindow({ email }: { email: string }) {
-    const { mutate, isPending } = useCreateUserMutation();
+    const { mutate, isIdle } = useCreateUserMutation();
 
     const [name, setName] = useState<string>('');
     const [nameValid, setNameValid] = useState<boolean>();
@@ -33,7 +33,7 @@ export default function CreateUserWindow({ email }: { email: string }) {
                             </div>
                         </button>
                     </WindowFooterStart>
-                    <Button title="Continue" valid={valid && !isPending} cn="bg-bg-accent text-fg-accent" onClick={() => {
+                    <Button title="Continue" valid={valid && isIdle} cn="bg-bg-accent text-fg-accent" onClick={() => {
                         mutate({
                             name: name
                         });

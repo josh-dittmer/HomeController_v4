@@ -1,4 +1,5 @@
 import { Endpoints } from "@/lib/api/endpoints";
+import { getTicket } from "@/lib/api/requests";
 import { useQueryClient } from "@tanstack/react-query";
 import { ClientToServerEvents, ServerToClientEvents, UserCheckStateReplyData, UserStateChangedData } from "hc_models/types";
 import { createContext, ReactNode, useEffect, useRef, useState } from "react";
@@ -53,9 +54,11 @@ export function GatewayProvider({ ticket, children }: { ticket: string, children
         socketInst.current = io(Endpoints.mainApiPublicUrl, {
             path: `${Endpoints.mainApiPrefix}/gateway`,
             auth: async (cb) => {
+                const res = await getTicket();
+
                 cb({
                     type: 'user',
-                    key: ticket
+                    key: res.ticket
                 })
             }
         });

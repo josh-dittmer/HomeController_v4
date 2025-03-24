@@ -11,5 +11,9 @@ export const Endpoints = {
     mainApiPublic: `${process.env.NEXT_PUBLIC_MAIN_API_PUBLIC_URL!}${process.env.NEXT_PUBLIC_MAIN_API_PREFIX!}`,
     mainApiInternal: `${process.env.NEXT_PUBLIC_MAIN_API_INTERNAL_URL!}${process.env.NEXT_PUBLIC_MAIN_API_PREFIX!}`,
 
+    selfApiPublicUrl: `${process.env.NEXT_PUBLIC_SELF_URL!}`,
+    selfApiPrefix: `${process.env.NEXT_PUBLIC_MAIN_API_PREFIX!}`,
+    selfApiPublic: `${process.env.NEXT_PUBLIC_SELF_URL!}${process.env.NEXT_PUBLIC_MAIN_API_PREFIX!}`,
+
     callbackUrl: `${process.env.NEXT_PUBLIC_SELF_URL!}/callback`
 };
