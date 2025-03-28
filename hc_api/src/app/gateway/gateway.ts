@@ -46,6 +46,7 @@ export type HCGatewaySocket = Socket<
 
 @WebSocketGateway({
     path: `${API_PREFIX}/gateway`,
+    namespace: '/',
     cors: {
         origin: CORS_ALLOWED_ORIGIN,
     },

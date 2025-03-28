@@ -1,3 +1,4 @@
+import { Logger } from "@nestjs/common";
 import { OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit, WebSocketGateway, WebSocketServer } from "@nestjs/websockets";
 import { Server, Socket } from "socket.io";
 import { API_PREFIX, CORS_ALLOWED_ORIGIN } from "../../../lib/common/values.js";
@@ -18,7 +19,9 @@ export class DeviceGateway implements OnGatewayInit, OnGatewayConnection, OnGate
     }
 
     async handleConnection(socket: Socket) {
-
+        if (!socket.handshake.auth.id || !socket.handshake.auth.secret) {
+            Logger.debug('Gateway connection failed: missing handshake data');
+        }
     }
 
     async handleDisconnect(socket: Socket) {
