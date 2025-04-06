@@ -10,9 +10,11 @@ import {
     GetAllDevicesResponseT,
     GetOneDeviceResponseT,
 } from 'hc_models/models';
+import { cast } from 'hc_models/util';
 import { MaxDeviceDescriptionLength, MaxDeviceNameLength } from 'hc_models/values';
+import { UUID } from 'io-ts-types';
 import { badRequest, notFound } from '../../../lib/common/responses.js';
-import { HCGateway } from '../../gateway/gateway.js';
+import { DeviceService } from '../../gateway/device/services/device.service.js';
 import { RepoService } from '../../repo/services/repo.service.js';
 
 @Controller('device')
@@ -21,7 +23,7 @@ export class DeviceController {
 
     constructor(
         private readonly hc: RepoService,
-        private readonly gateway: HCGateway,
+        private readonly deviceService: DeviceService,
     ) { }
 
     @Get('all')
@@ -33,7 +35,7 @@ export class DeviceController {
             offlineDevices: [],
         };
 
-        const onlineDeviceIds = await this.gateway.getOnlineDevices(res.locals.userId);
+        const onlineDeviceIds = await this.deviceService.getOnlineDevices(res.locals.userId);
 
         devices.forEach(device => {
             if (onlineDeviceIds.has(device.deviceId)) {
@@ -56,7 +58,7 @@ export class DeviceController {
 
         const result: GetOneDeviceResponseT = {
             device: device,
-            online: await this.gateway.isDeviceOnline(res.locals.userId, device.deviceId),
+            online: await this.deviceService.isDeviceOnline(cast(UUID)(res.locals.userId), device.deviceId),
         };
 
         res.json(result);
@@ -126,7 +128,7 @@ export class DeviceController {
             return notFound(res, `device ${id}`);
         }
 
-        this.gateway.sendDeleteEvent(res.locals.userId, id);
+        this.deviceService.sendDeviceDeletedNotification(cast(UUID)(res.locals.userId), cast(UUID)(id), {});
 
         this.logger.log(`[device/${id}] deleted`);
 

@@ -9,6 +9,9 @@ export const MaxDeviceDescriptionLength = 255;
 export const DeviceSecretNumBytes = 255;
 export const TicketNumBytes = 255;
 
+// time limits
+export const DeviceStateResponseTimeout = 5000;
+
 // device types
 export const DeviceType = t.union([
     t.literal('rgb_lights'),

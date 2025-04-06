@@ -1,7 +1,10 @@
 import { GatewayContext } from "@/contexts/gateway";
+import { HCGatewayModels } from "hc_models/models";
+import { cast } from "hc_models/util";
+import { UUID } from "io-ts-types";
 import { useContext, useEffect, useState } from "react";
 
-export function useDeviceState<T>(deviceId: string, decoder: (data: object) => T, debugDelay?: boolean) {
+export function useDeviceState<T>(deviceId: string, decode: (data: unknown) => T, debugDelay?: boolean) {
     const [state, setState] = useState<T | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
 
@@ -9,20 +12,24 @@ export function useDeviceState<T>(deviceId: string, decoder: (data: object) => T
 
     useEffect(() => {
         if (gatewayCtx && gatewayCtx.connected) {
-            gatewayCtx.subscribe(deviceId, (data: object) => {
+            gatewayCtx.subscribe(deviceId, (data: unknown) => {
                 try {
-                    setState(decoder(data));
+                    setState(decode(data));
                 } catch {
                     setState(null);
                 }
             });
 
-            gatewayCtx.requestState(deviceId, async (data: object | null) => {
+            gatewayCtx.requestState(cast(UUID)(deviceId), async (data: HCGatewayModels.User.StateResponseDataT) => {
                 try {
                     if (debugDelay)
                         await new Promise((resolve) => setTimeout(resolve, 3000));
 
-                    setState(data ? decoder(data) : null);
+                    setState(
+                        data.state !== null
+                            ? decode(data.state)
+                            : null
+                    );
                 } finally {
                     setLoading(false);
                 }
@@ -32,7 +39,7 @@ export function useDeviceState<T>(deviceId: string, decoder: (data: object) => T
                 gatewayCtx.unsubscribe(deviceId);
             }
         }
-    }, [gatewayCtx, gatewayCtx?.connected, deviceId, decoder, debugDelay]);
+    }, [gatewayCtx, gatewayCtx?.connected, deviceId, decode, debugDelay]);
 
     return { state, loading, ctx: gatewayCtx };
 }

@@ -17,7 +17,7 @@ export const RGBLightsState = t.type({
 
 export type RGBLightsStateT = t.TypeOf<typeof RGBLightsState>;
 
-export function stateDecode(data: object): RGBLightsStateT {
+export function stateDecode(data: unknown): RGBLightsStateT {
     const decoded = RGBLightsState.decode(data);
     if (isLeft(decoded)) {
         throw new Error('invalid data provided for RGBLights state decode');

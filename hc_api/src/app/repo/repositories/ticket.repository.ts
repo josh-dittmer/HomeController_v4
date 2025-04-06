@@ -1,10 +1,13 @@
 import { eq } from 'drizzle-orm';
+import { cast } from 'hc_models/util';
+import { UUID } from "io-ts-types";
 import { ticketsTable } from '../../../../drizzle/schema.js';
 import { TICKET_LIFETIME } from '../../../lib/common/values.js';
 import { generateUserTicket } from '../../../lib/secret.js';
 import { DBService } from '../../db/services/db.service.js';
+
 export class TicketRepository {
-    constructor(private readonly db: DBService) {}
+    constructor(private readonly db: DBService) { }
 
     async create(userId: string): Promise<string> {
         const ticketValue = generateUserTicket();
@@ -20,7 +23,7 @@ export class TicketRepository {
         return ticketValue;
     }
 
-    async consume(ticketValue: string): Promise<string> {
+    async consume(ticketValue: string): Promise<UUID> {
         const ticketResult = await this.db
             .get()
             .select({
@@ -47,6 +50,6 @@ export class TicketRepository {
             throw new Error('ticket expired');
         }
 
-        return res.userId;
+        return cast(UUID)(res.userId);
     }
 }

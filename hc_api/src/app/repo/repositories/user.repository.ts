@@ -1,13 +1,14 @@
 import { eq } from 'drizzle-orm';
-import { CreateUserRequestT, UserArrayT, UserT } from 'hc_models/models';
+import { CreateUserRequestT, UserT } from 'hc_models/models';
 import { usersTable } from '../../../../drizzle/schema.js';
+import { validateUUID } from '../../../lib/uuid.js';
 import { DBService } from '../../db/services/db.service.js';
 
 export class UserRepository {
-    constructor(private readonly db: DBService) {}
+    constructor(private readonly db: DBService) { }
 
     async getOne(userId: string): Promise<UserT | null> {
-        const users: UserArrayT = await this.db
+        const users = await this.db
             .get()
             .select({
                 userId: usersTable.userId,
@@ -20,7 +21,10 @@ export class UserRepository {
             return null;
         }
 
-        return users[0];
+        return {
+            ...users[0],
+            userId: validateUUID(users[0].userId)
+        };
     }
 
     async create(userId: string, data: CreateUserRequestT) {

@@ -1,5 +1,7 @@
 import { and, eq } from 'drizzle-orm';
 import { CreateDeviceRequestT, DeviceArrayT, DeviceT } from 'hc_models/models';
+import { cast } from 'hc_models/util';
+import { UUID } from 'io-ts-types';
 import { devicesTable } from '../../../../drizzle/schema.js';
 import { generateDeviceSecret, hashSecret, verifySecret } from '../../../lib/secret.js';
 import { DBService } from '../../db/services/db.service.js';
@@ -8,7 +10,7 @@ export class DeviceRepository {
     constructor(private readonly db: DBService) { }
 
     async getAll(userId: string): Promise<DeviceArrayT> {
-        const devices: DeviceArrayT = await this.db.get()
+        const devices = await this.db.get()
             .select({
                 deviceId: devicesTable.deviceId,
                 type: devicesTable.type,
@@ -18,11 +20,14 @@ export class DeviceRepository {
             .from(devicesTable)
             .where(eq(devicesTable.userId, userId));
 
-        return devices;
+        return devices.map((device) => ({
+            ...device,
+            deviceId: cast(UUID)(device.deviceId)
+        }))
     }
 
     async getOne(userId: string, deviceId: string): Promise<DeviceT | null> {
-        const devices: DeviceArrayT = await this.db.get()
+        const devices = await this.db.get()
             .select({
                 deviceId: devicesTable.deviceId,
                 type: devicesTable.type,
@@ -36,14 +41,17 @@ export class DeviceRepository {
             return null;
         }
 
-        return devices[0];
+        return {
+            ...devices[0],
+            deviceId: cast(UUID)(devices[0].deviceId)
+        }
     }
 
     async create(
         userId: string,
         data: CreateDeviceRequestT,
-    ): Promise<{ id: string; secret: string }> {
-        const id = crypto.randomUUID();
+    ): Promise<{ id: UUID; secret: string }> {
+        const id = crypto.randomUUID() as UUID;
         const secret = generateDeviceSecret();
 
         const device: typeof devicesTable.$inferInsert = {
@@ -81,7 +89,7 @@ export class DeviceRepository {
         return qr.rowCount || 0;
     }
 
-    async checkSecret(deviceId: string, secret: string): Promise<string> {
+    async checkSecret(deviceId: string, secret: string): Promise<UUID> {
         const devices = await this.db.get()
             .select({
                 deviceId: devicesTable.deviceId,
@@ -101,6 +109,6 @@ export class DeviceRepository {
             throw new Error('bad device secret');
         }
 
-        return devices[0].userId;
+        return cast(UUID)(devices[0].userId);
     }
 }

@@ -1,13 +1,16 @@
 import { Endpoints } from "@/lib/api/endpoints";
 import { getTicket } from "@/lib/api/requests";
 import { useQueryClient } from "@tanstack/react-query";
-import { ClientToServerEvents, ServerToClientEvents, UserCheckStateReplyData, UserStateChangedData } from "hc_models/types";
+import { HCGatewayModels } from "hc_models/models";
+import { HCClientSocket } from "hc_models/types";
+import { cast } from "hc_models/util";
+import { UUID } from "io-ts-types";
 import { createContext, ReactNode, useEffect, useRef, useState } from "react";
-import { io, Socket } from "socket.io-client";
+import { io } from "socket.io-client";
 
-type RequestStateFunc = (deviceId: string, cb: (data: object | null) => void) => void;
-type SendCommandFunc = (deviceId: string, data: object) => void;
-type CallbackFunc = (data: object) => void;
+type RequestStateFunc = (deviceId: UUID, cb: (data: HCGatewayModels.User.StateResponseDataT) => void) => void;
+type SendCommandFunc = (deviceId: UUID, data: unknown) => void;
+type CallbackFunc = (data: unknown) => void;
 type SubscribeFunc = (channel: string, callback: CallbackFunc) => void;
 type UnsubscribeFunc = (channel: string) => void;
 
@@ -24,19 +27,19 @@ export const GatewayContext = createContext<GatewayContextType | null>(null);
 export function GatewayProvider({ ticket, children }: { ticket: string, children: ReactNode }) {
     const client = useQueryClient();
 
-    const socketInst = useRef<Socket<ServerToClientEvents, ClientToServerEvents> | null>(null);
+    const socketInst = useRef<HCClientSocket | null>(null);
     const channels = useRef(new Map<string, CallbackFunc>());
 
     const [connected, setConnected] = useState<boolean>(false);
 
-    const requestState: RequestStateFunc = async (deviceId: string, cb: (data: object | null) => void) => {
-        socketInst?.current?.emit('userCheckStateRequest', { deviceId: deviceId, }, (msg: UserCheckStateReplyData) => {
-            cb(msg.data);
+    const requestState: RequestStateFunc = async (deviceId: UUID, cb: (data: HCGatewayModels.User.StateResponseDataT) => void) => {
+        socketInst?.current?.emit('stateRequest', { deviceId: deviceId }, (data: HCGatewayModels.User.StateResponseDataT) => {
+            cb(data);
         });
     };
 
-    const sendCommand: SendCommandFunc = (deviceId: string, data: object) => {
-        socketInst?.current?.emit('userCommand', {
+    const sendCommand: SendCommandFunc = (deviceId: UUID, data: unknown) => {
+        socketInst?.current?.emit('commandRequest', {
             deviceId: deviceId,
             data: data
         });
@@ -51,14 +54,13 @@ export function GatewayProvider({ ticket, children }: { ticket: string, children
     };
 
     useEffect(() => {
-        socketInst.current = io(Endpoints.mainApiPublicUrl, {
+        socketInst.current = io(`${Endpoints.mainApiPublicUrl}/user`, {
             path: `${Endpoints.mainApiPrefix}/gateway`,
             auth: async (cb) => {
                 const res = await getTicket();
 
                 cb({
-                    type: 'user',
-                    key: res.ticket
+                    ticket: res.ticket,
                 })
             }
         });
@@ -72,23 +74,27 @@ export function GatewayProvider({ ticket, children }: { ticket: string, children
             setConnected(true);
         });
 
-        socketInst.current.on('userStateChanged', (msg: UserStateChangedData) => {
-            const cb = channels.current.get(msg.deviceId);
+        socketInst.current.on('stateChangedNotification', (data: HCGatewayModels.User.StateChangedNotifcationDataT) => {
+            const notification = cast(HCGatewayModels.User.StateChangedNotifcationData)(data);
+
+            const cb = channels.current.get(notification.deviceId);
 
             if (cb) {
-                cb(msg.data);
+                cb(notification.data);
             }
         });
 
-        /*socketInst.current.on('userDeviceConnected', (msg: UserDeviceConnectedData) => {
+        socketInst.current.on('deviceConnectedNotification', (data: HCGatewayModels.User.DeviceConnectedNotificationDataT) => {
             //client.invalidateQueries({ queryKey: allDevicesKey() });
             //client.invalidateQueries({ queryKey: oneDeviceKey(msg.deviceId) });
+            console.log(`[device/${data.deviceId}] connected`);
         });
-        
-        socketInst.current.on('userDeviceDisconnected', (msg: UserDeviceDisconnectedData) => {
+
+        socketInst.current.on('deviceDisconnectedNotification', (data: HCGatewayModels.User.DeviceDisconnectedNotificationDataT) => {
             //client.invalidateQueries({ queryKey: allDevicesKey() });
             //client.invalidateQueries({ queryKey: oneDeviceKey(msg.deviceId) });
-        });*/
+            console.log(`[device/${data.deviceId}] disconnected`);
+        });
 
         return () => {
             socketInst.current?.disconnect();

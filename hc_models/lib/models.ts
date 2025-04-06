@@ -1,10 +1,121 @@
 import * as t from 'io-ts';
-import { DeviceType } from './values';
+import { UUID } from 'io-ts-types';
+import { DeviceType } from './values.js';
 
-//export * from './values';
+// for the WebSocket API
+
+export namespace HCGatewayModels {
+    export namespace User {
+        export const Auth = t.type({
+            ticket: t.string
+        });
+
+        export type AuthT = t.TypeOf<typeof Auth>;
+
+        export const SocketData = t.type({
+            id: UUID,
+            queue: t.array(t.Function)
+        });
+
+        export type SocketDataT = t.TypeOf<typeof SocketData>;
+
+        // sent to users
+        export const StateResponseData = t.type({
+            state: t.union([
+                t.null, t.unknown
+            ])
+        });
+
+        export type StateResponseDataT = t.TypeOf<typeof StateResponseData>;
+
+        export const DeviceConnectedNotificationData = t.type({
+            deviceId: UUID
+        });
+
+        export type DeviceConnectedNotificationDataT = t.TypeOf<typeof DeviceConnectedNotificationData>;
+
+        export const DeviceDisconnectedNotificationData = t.type({
+            deviceId: UUID
+        });
+
+        export type DeviceDisconnectedNotificationDataT = t.TypeOf<typeof DeviceDisconnectedNotificationData>;
+
+
+        export const StateChangedNotifcationData = t.type({
+            deviceId: UUID,
+            data: t.unknown
+        });
+
+        export type StateChangedNotifcationDataT = t.TypeOf<typeof StateChangedNotifcationData>;
+
+        // sent from users
+        export const StateRequestData = t.type({
+            deviceId: UUID
+        });
+
+        export type StateRequestDataT = t.TypeOf<typeof StateRequestData>;
+
+        export const CommandRequestData = t.type({
+            deviceId: UUID,
+            data: t.unknown
+        })
+
+        export type CommandRequestDataT = t.TypeOf<typeof CommandRequestData>;
+    }
+
+    export namespace Device {
+        export const Auth = t.type({
+            id: UUID,
+            secret: t.string
+        });
+
+        export type AuthT = t.TypeOf<typeof Auth>;
+
+        export const SocketData = t.type({
+            id: UUID,
+            owner: UUID
+        })
+
+        export type SocketDataT = t.TypeOf<typeof SocketData>;
+
+        // sent to devices
+        export const StateRequestData = t.type({
+            socketId: t.string
+        });
+
+        export type StateRequestDataT = t.TypeOf<typeof StateRequestData>;
+
+        export const CommandRequestData = t.type({
+            data: t.unknown
+        });
+
+        export type CommandRequestDataT = t.TypeOf<typeof CommandRequestData>;
+
+        export const DeviceDeletedNotificationData = t.type({});
+
+        export type DeviceDeletedNotificationDataT = t.TypeOf<typeof DeviceDeletedNotificationData>;
+
+        // sent from devices
+        export const StateResponseData = t.type({
+            socketId: t.string,
+            data: t.unknown
+        });
+
+        export type StateResponseDataT = t.TypeOf<typeof StateResponseData>;
+
+        export const StateChangeNotificationData = t.type({
+            data: t.unknown
+        });
+
+        export type StateChangeNotificationDataT = t.TypeOf<typeof StateChangeNotificationData>;
+    }
+}
+
+
+// for the HTTP API
 
 export const User = t.type({
-    userId: t.string,
+    userId: UUID,
     name: t.string
 })
 
@@ -14,7 +125,7 @@ export const UserArray = t.array(User);
 export type UserArrayT = t.TypeOf<typeof UserArray>;
 
 export const Device = t.type({
-    deviceId: t.string,
+    deviceId: UUID,
     type: t.string,
     name: t.string,
     description: t.string
@@ -61,7 +172,7 @@ export const CreateDeviceRequest = t.type({
 export type CreateDeviceRequestT = t.TypeOf<typeof CreateDeviceRequest>;
 
 export const CreateDeviceResponse = t.type({
-    deviceId: t.string,
+    deviceId: UUID,
     secret: t.string
 });
 

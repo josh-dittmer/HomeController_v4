@@ -30,6 +30,7 @@
         "cors": "^2.8.5",
         "drizzle-orm": "^0.40.0",
         "io-ts": "^2.2.22",
+        "io-ts-types": "^0.5.19",
         "jsonwebtoken": "^9.0.2",
         "npm-check-updates": "^17.1.15",
         "pg": "^8.13.1",

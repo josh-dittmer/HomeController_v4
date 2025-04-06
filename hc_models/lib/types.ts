@@ -1,82 +1,55 @@
-import { ClientTypeT } from "./values";
+import { Server, Socket as ServerSocket } from "socket.io";
+import { Socket as ClientSocket } from "socket.io-client";
+import { HCGatewayModels } from "./models.js";
 
-// sent to users
-export type UserCheckStateReplyData = {
-    data: object | null
+namespace HCEvents {
+    type DefaultEventCallback = (data: unknown) => void;
+    type DefaultEventWithAckCallback = (data: unknown, cb: DefaultEventCallback) => void;
+
+    namespace User {
+        // to user
+        export interface ServerToClientEvents {
+            stateChangedNotification: (data: HCGatewayModels.User.StateChangedNotifcationDataT) => void;
+            deviceConnectedNotification: (data: HCGatewayModels.User.DeviceConnectedNotificationDataT) => void;
+            deviceDisconnectedNotification: (data: HCGatewayModels.User.DeviceDisconnectedNotificationDataT) => void;
+        };
+
+        // from user
+        export interface ClientToServerEvents {
+            stateRequest: (data: HCGatewayModels.User.StateRequestDataT, cb: (data: HCGatewayModels.User.StateResponseDataT) => void) => void,
+            commandRequest: (data: HCGatewayModels.User.CommandRequestDataT) => void;
+        };
+    }
+
+    namespace Device {
+        // to device
+        export interface ServerToClientEvents {
+            stateRequest: (data: HCGatewayModels.Device.StateRequestDataT) => void;
+            commandRequest: (data: HCGatewayModels.Device.CommandRequestDataT) => void;
+            deviceDeletedNotification: (data: HCGatewayModels.Device.DeviceDeletedNotificationDataT) => void;
+        };
+
+        // from device
+        export interface ClientToServerEvents {
+            stateResponse: (data: HCGatewayModels.Device.StateResponseDataT) => void;
+            stateChangedNotification: (data: HCGatewayModels.Device.StateChangeNotificationDataT) => void;
+        };
+    }
+
+    export type ServerToClientEvents = User.ServerToClientEvents & Device.ServerToClientEvents;
+    export type ClientToServerEvents = User.ClientToServerEvents & Device.ClientToServerEvents;
+    export type InterServerEvents = {};
 }
 
-export type UserStateChangedData = {
-    deviceId: string,
-    data: object
-};
-
-export type UserDeviceConnectedData = {
-    deviceId: string
-};
-
-export type UserDeviceDisconnectedData = {
-    deviceId: string
-};
-
-// sent to devices
-export type DeviceCheckStateRequestData = {
-    socketId: string
-};
-
-export type DeviceCommandData = {
-    data: object
-};
-
-// sent from users
-export type UserCheckStateRequestData = {
-    deviceId: string
+export type SocketData = {
+    user: HCGatewayModels.User.SocketDataT,
+    device: null,
+} | {
+    user: null,
+    device: HCGatewayModels.Device.SocketDataT
 }
 
-export type UserCommandData = {
-    deviceId: string,
-    data: object
-}
+export type HCServer = Server<HCEvents.ClientToServerEvents, HCEvents.ServerToClientEvents, HCEvents.InterServerEvents, SocketData>;
 
-// sent from devices
-export type DeviceCheckStateReplyData = {
-    socketId: string,
-    data: object
-}
-
-export type DeviceStateChangedData = {
-    data: object
-};
-
-export interface ServerToClientEvents {
-    // sent to users
-    userStateChanged: (msg: UserStateChangedData) => void;
-    userDeviceConnected: (msg: UserDeviceConnectedData) => void;
-    userDeviceDisconnected: (msg: UserDeviceDisconnectedData) => void;
-
-    // sent to devices
-    deviceCheckStateRequest: (msg: DeviceCheckStateRequestData) => void;
-    deviceCommand: (msg: DeviceCommandData) => void;
-    deviceDeleted: () => void;
-}
-
-export interface ClientToServerEvents {
-    // sent from users
-    userCheckStateRequest: (msg: UserCheckStateRequestData, cb: (msg: UserCheckStateReplyData) => void) => void;
-    userCommand: (msg: UserCommandData) => void;
-
-    // sent from devices
-    deviceCheckStateReply: (msg: DeviceCheckStateReplyData) => void;
-    deviceStateChanged: (msg: DeviceStateChangedData) => void;
-}
-
-export interface InterServerEvents {
-
-}
-
-export interface SocketData {
-    type: ClientTypeT,
-    userId?: string,
-    deviceId?: string,
-    ownerId?: string,
-    checkStateCallbackQueue?: Array<(reply: object) => void>
-}
+export type HCServerSocket = ServerSocket<HCEvents.ClientToServerEvents, HCEvents.ServerToClientEvents, HCEvents.InterServerEvents, SocketData>;
+export type HCClientSocket = ClientSocket<HCEvents.ServerToClientEvents, HCEvents.ClientToServerEvents>;

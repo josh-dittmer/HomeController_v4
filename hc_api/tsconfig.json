@@ -4,6 +4,10 @@
         "target": "ESNext",
         "module": "NodeNext",
         "moduleResolution": "NodeNext",
+        "lib": [
+            "ESNext",
+            "DOM"
+        ],
         /* Advanced Options */
         "experimentalDecorators": true,
         "emitDecoratorMetadata": true,
@@ -12,9 +16,13 @@
         /* Output Options */
         "removeComments": true,
         "sourceMap": true,
-        "types": ["./src/global.d.ts"],
+        "types": [
+            "./src/global.d.ts"
+        ],
         "strict": true,
-        "skipLibCheck": true
+        "skipLibCheck": true,
     },
-    "include": ["**/*.ts"]
+    "include": [
+        "**/*.ts"
+    ]
 }
