@@ -50,31 +50,4 @@ export namespace HCGatewayTypes {
         export type Server = GenericServer<ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData>;
         export type ServerSocket = GenericServerSocket<ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData>;
     }
-
-    //export type ServerToClientEvents = User.ServerToClientEvents & Device.ServerToClientEvents;
-    //export type ClientToServerEvents = User.ClientToServerEvents & Device.ClientToServerEvents;
 }
-
-/*export type UserSocketData = {
-    user: HCGatewayModels.User.SocketDataT
-};
-
-export type DeviceSocketData = {
-    device: HCGatewayModels.Device.SocketDataT
-};*/
-
-/*export type SocketData = {
-    user: HCGatewayModels.User.SocketDataT,
-    device: null,
-} | {
-    user: null,
-    device: HCGatewayModels.Device.SocketDataT
-}*/
-
-//export type HCUserServer = Server<HCEvents.User.ClientToServerEvents, HCEvents.User.ServerToClientEvents, HCEvents.InterServerEvents, UserSocketData>;
-//export type HCDeviceServer = Server<HCEvents.Device.ClientToServerEvents, HCEvents.Device.ServerToClientEvents, HCEvents.InterServerEvents, DeviceSocketData>;
-
-//export type HCUserServerSocket = ServerSocket<HCEvents.User.ClientToServerEvents, HCEvents.User.ServerToClientEvents, HCEvents.InterServerEvents, UserSocketData>;
-//export type HCDeviceServerSocket = ServerSocket<HCEvents.Device.ClientToServerEvents, HCEvents.Device.ServerToClientEvents, HCEvents.InterServerEvents, DeviceSocketData>;
-
-//export type HCUserClientSocket = ClientSocket<HCEvents.User.ServerToClientEvents, HCEvents.User.ClientToServerEvents>;
