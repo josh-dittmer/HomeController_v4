@@ -17,11 +17,6 @@ export class DeviceService {
 
         const devices: Set<string> = new Set<string>();
         sockets.forEach((socket) => {
-            if (!socket.data.device) {
-                this.logger.debug('getOnlineDevices(): Incorrect socket type!');
-                return;
-            }
-
             devices.add(socket.data.device.id);
         });
 
@@ -35,14 +30,9 @@ export class DeviceService {
             return false;
         }
 
-        return sockets.some((socket) => {
-            if (!socket.data.device) {
-                this.logger.debug('isDeviceOnline(): Incorrect socket type!');
-                return false;
-            }
-
-            return socket.data.device.id === deviceId;
-        });
+        return sockets.some(
+            (socket) => socket.data.device.id === deviceId
+        );
     }
 
     async getDeviceSocket(deviceId: UUID) {
@@ -50,11 +40,6 @@ export class DeviceService {
 
         if (sockets.length !== 1) {
             this.logger.debug(`getDeviceSocket(): Invalid/offline device`,);
-            return null;
-        }
-
-        if (!sockets[0].data.device) {
-            this.logger.debug('getDeviceSocket(): Incorrect socket type! (expected device)');
             return null;
         }
 
@@ -68,9 +53,6 @@ export class DeviceService {
         }
 
         const device = socket.data.device;
-        if (!device) {
-            return null;
-        }
 
         if (device.owner !== userId) {
             this.logger.debug('getDevice(): Disallowed device');

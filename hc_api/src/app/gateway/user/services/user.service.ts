@@ -20,11 +20,6 @@ export class UserService {
             return null;
         }
 
-        if (!sockets[0].data.user) {
-            this.logger.debug('getUser(): Incorrect socket type! (expected user)');
-            return null;
-        }
-
         return sockets[0].data.user;
     }
 

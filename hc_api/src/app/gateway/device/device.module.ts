@@ -13,9 +13,6 @@ import { DeviceService } from "./services/device.service.js";
         DeviceGateway,
         DeviceService.register()
     ],
-    exports: [
-        DeviceGateway,
-        DeviceService
-    ]
+    exports: [DeviceService]
 })
 export class DeviceModule { }

@@ -1,13 +1,13 @@
 import { Logger } from "@nestjs/common";
 import { isLeft } from 'fp-ts/lib/Either.js';
 import { HCGatewayModels } from "hc_models/models";
-import { HCServer, HCServerSocket } from "hc_models/types";
+import { HCGatewayTypes } from "hc_models/types";
 import { ExtendedError } from "socket.io";
 import { tryCatch } from "../../../../lib/try-catch.js";
 import { RepoService } from "../../../repo/services/repo.service.js";
 
-export const deviceMiddleware = (server: HCServer, hc: RepoService, logger: Logger) =>
-    async (socket: HCServerSocket, next: (err?: ExtendedError) => void) => {
+export const deviceMiddleware = (server: HCGatewayTypes.Device.Server, hc: RepoService, logger: Logger) =>
+    async (socket: HCGatewayTypes.Device.ServerSocket, next: (err?: ExtendedError) => void) => {
         const decoded = HCGatewayModels.Device.Auth.decode(socket.handshake.auth);
         if (isLeft(decoded)) {
             logger.debug('Gateway connection failed: invalid auth data');

@@ -2,7 +2,7 @@ import { Endpoints } from "@/lib/api/endpoints";
 import { getTicket } from "@/lib/api/requests";
 import { useQueryClient } from "@tanstack/react-query";
 import { HCGatewayModels } from "hc_models/models";
-import { HCClientSocket } from "hc_models/types";
+import { HCGatewayTypes } from "hc_models/types";
 import { cast } from "hc_models/util";
 import { UUID } from "io-ts-types";
 import { createContext, ReactNode, useEffect, useRef, useState } from "react";
@@ -27,7 +27,7 @@ export const GatewayContext = createContext<GatewayContextType | null>(null);
 export function GatewayProvider({ ticket, children }: { ticket: string, children: ReactNode }) {
     const client = useQueryClient();
 
-    const socketInst = useRef<HCClientSocket | null>(null);
+    const socketInst = useRef<HCGatewayTypes.User.ClientSocket | null>(null);
     const channels = useRef(new Map<string, CallbackFunc>());
 
     const [connected, setConnected] = useState<boolean>(false);

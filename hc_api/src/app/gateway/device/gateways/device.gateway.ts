@@ -1,7 +1,7 @@
 import { forwardRef, Inject, Logger } from "@nestjs/common";
 import { ConnectedSocket, MessageBody, OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit, SubscribeMessage, WebSocketGateway, WebSocketServer } from "@nestjs/websockets";
 import { HCGatewayModels } from "hc_models/models";
-import { HCServer, HCServerSocket } from "hc_models/types";
+import { HCGatewayTypes } from "hc_models/types";
 import { cast } from "hc_models/util";
 import { WrapperType } from "../../../../lib/common/types.js";
 import { API_PREFIX, CORS_ALLOWED_ORIGIN, DEVICE_NAMESPACE } from "../../../../lib/common/values.js";
@@ -18,7 +18,7 @@ import { deviceMiddleware } from "../middleware/device.middleware.js";
 })
 export class DeviceGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
     @WebSocketServer()
-    server!: HCServer;
+    server!: HCGatewayTypes.Device.Server;
 
     private readonly logger = new Logger('DeviceGateway');
 
@@ -30,16 +30,11 @@ export class DeviceGateway implements OnGatewayInit, OnGatewayConnection, OnGate
         private readonly userService: WrapperType<UserService>
     ) { }
 
-    async afterInit(server: HCServer) {
+    async afterInit(server: HCGatewayTypes.Device.Server) {
         this.server.use(deviceMiddleware(server, this.repo, this.logger));
     }
 
-    async handleConnection(socket: HCServerSocket) {
-        if (!socket.data.device) {
-            this.logger.debug('handleConnection(): Incorrect socket type!');
-            return;
-        }
-
+    async handleConnection(socket: HCGatewayTypes.Device.ServerSocket) {
         const device = socket.data.device;
 
         socket.join(`device_${device.id}`);
@@ -53,12 +48,7 @@ export class DeviceGateway implements OnGatewayInit, OnGatewayConnection, OnGate
         this.logger.log(`[device/${device.id}] has connected`);
     }
 
-    async handleDisconnect(socket: HCServerSocket) {
-        if (!socket.data.device) {
-            this.logger.debug('handleDisconnect(): Incorrect socket type!');
-            return;
-        }
-
+    async handleDisconnect(socket: HCGatewayTypes.Device.ServerSocket) {
         const device = socket.data.device;
 
         this.userService.sendDeviceDisonnectedNotification(device.owner, {
@@ -69,12 +59,7 @@ export class DeviceGateway implements OnGatewayInit, OnGatewayConnection, OnGate
     }
 
     @SubscribeMessage('stateResponse')
-    async handleStateResponse(@ConnectedSocket() socket: HCServerSocket, @MessageBody() data: unknown): Promise<void> {
-        if (!socket.data.device) {
-            this.logger.debug('handleStateResponse(): Incorrect socket type!');
-            return;
-        }
-
+    async handleStateResponse(@ConnectedSocket() socket: HCGatewayTypes.Device.ServerSocket, @MessageBody() data: unknown): Promise<void> {
         const device = socket.data.device;
 
         const response = cast(HCGatewayModels.Device.StateResponseData)(data);
@@ -96,12 +81,7 @@ export class DeviceGateway implements OnGatewayInit, OnGatewayConnection, OnGate
     }
 
     @SubscribeMessage('stateChangedNotification')
-    async handleStateChangedNotification(@ConnectedSocket() socket: HCServerSocket, @MessageBody() data: unknown): Promise<void> {
-        if (!socket.data.device) {
-            this.logger.debug('handleStateChangedNotification(): Incorrect socket type!');
-            return;
-        }
-
+    async handleStateChangedNotification(@ConnectedSocket() socket: HCGatewayTypes.Device.ServerSocket, @MessageBody() data: unknown): Promise<void> {
         const device = socket.data.device;
 
         const notification = cast(HCGatewayModels.Device.StateChangeNotificationData)(data);

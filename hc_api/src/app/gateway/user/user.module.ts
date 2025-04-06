@@ -13,6 +13,6 @@ import { UserService } from "./services/user.service.js";
         UserGateway,
         UserService.register()
     ],
-    exports: [UserGateway, UserService]
+    exports: [UserService]
 })
 export class UserModule { }
