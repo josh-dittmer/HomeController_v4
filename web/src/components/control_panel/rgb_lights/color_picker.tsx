@@ -2,10 +2,11 @@
 
 import { GatewayContextType } from "@/contexts/gateway";
 import { Commands } from "@/lib/api/device_data/rgb_lights";
+import { UUID } from "io-ts-types";
 import { motion } from 'motion/react';
 import { ColorResult, HuePicker } from "react-color";
 
-export default function ColorPicker({ ctx, deviceId, r, g, b }: { ctx: GatewayContextType | null, deviceId: string, r: number, g: number, b: number }) {
+export default function ColorPicker({ ctx, deviceId, r, g, b }: { ctx: GatewayContextType | null, deviceId: UUID, r: number, g: number, b: number }) {
     const handleChange = (color: ColorResult) => {
         ctx?.sendCommand(deviceId, Commands.setColor(color.rgb.r, color.rgb.g, color.rgb.b));
     }

@@ -1,8 +1,9 @@
 import { GatewayContextType } from "@/contexts/gateway";
 import { Commands } from "@/lib/api/device_data/rgb_lights";
+import { UUID } from "io-ts-types";
 import { motion } from 'motion/react';
 
-export default function ColorButton({ enabled, ctx, deviceId, r, g, b, selectedR, selectedG, selectedB, cn }: { enabled: boolean | null, ctx: GatewayContextType | null, deviceId: string, r: number, g: number, b: number, selectedR: number | undefined, selectedG: number | undefined, selectedB: number | undefined, cn: string }) {
+export default function ColorButton({ enabled, ctx, deviceId, r, g, b, selectedR, selectedG, selectedB, cn }: { enabled: boolean | null, ctx: GatewayContextType | null, deviceId: UUID, r: number, g: number, b: number, selectedR: number | undefined, selectedG: number | undefined, selectedB: number | undefined, cn: string }) {
     const setColor = () => {
         if (r === selectedR && g === selectedG && b === selectedB) {
             ctx?.sendCommand(deviceId, Commands.powerOff());

@@ -1,5 +1,6 @@
 import { GatewayContextType } from "@/contexts/gateway";
 import { Commands, RGBLightsProgramT } from "@/lib/api/device_data/rgb_lights";
+import { UUID } from "io-ts-types";
 import { motion } from 'motion/react';
 
 export function RainbowIcon({ cn }: { cn: string }) {
@@ -25,7 +26,7 @@ export function RainbowIcon({ cn }: { cn: string }) {
     )
 }
 
-export default function ProgramButton({ enabled, ctx, deviceId, program, selectedProgram, cn }: { enabled: boolean | null, ctx: GatewayContextType | null, deviceId: string, program: RGBLightsProgramT, selectedProgram?: RGBLightsProgramT, cn: string }) {
+export default function ProgramButton({ enabled, ctx, deviceId, program, selectedProgram, cn }: { enabled: boolean | null, ctx: GatewayContextType | null, deviceId: UUID, program: RGBLightsProgramT, selectedProgram?: RGBLightsProgramT, cn: string }) {
     const startProgram = (program: RGBLightsProgramT) => {
         ctx?.sendCommand(deviceId, Commands.startProgram(program));
     };
