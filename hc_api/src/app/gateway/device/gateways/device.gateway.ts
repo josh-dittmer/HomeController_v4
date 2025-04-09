@@ -74,7 +74,13 @@ export class DeviceGateway implements OnGatewayInit, OnGatewayConnection, OnGate
             return;
         }
 
-        const cb = user.queue.shift();
+        const deviceQueue = user.queues.get(device.id);
+        if (!deviceQueue) {
+            this.logger.debug('handleStateResponse(): Device queue is missing!');
+            return;
+        }
+
+        const cb = deviceQueue.shift();
         if (cb) {
             cb(response.data);
         }

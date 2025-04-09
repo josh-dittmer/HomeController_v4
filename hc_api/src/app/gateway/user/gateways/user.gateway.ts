@@ -69,7 +69,9 @@ export class UserGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
                 resolve({ state: null });
             }, DeviceStateResponseTimeout);
 
-            user.queue.push((state: unknown) => {
+            const deviceQueue = user.queues.get(device.id) ?? [];
+
+            deviceQueue.push((state: unknown) => {
                 if (!timedOut) {
                     clearTimeout(timeout);
 
@@ -78,7 +80,9 @@ export class UserGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
                 } else {
                     this.logger.debug(`handleStateRequest(): [device/${device.id}] received after timeout`);
                 }
-            })
+            });
+
+            user.queues.set(device.id, deviceQueue)
 
             this.logger.verbose(`[stateRequest] -> [device/${device.id}]`);
 

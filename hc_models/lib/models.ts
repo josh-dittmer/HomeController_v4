@@ -12,12 +12,10 @@ export namespace HCGatewayModels {
 
         export type AuthT = t.TypeOf<typeof Auth>;
 
-        export const SocketData = t.type({
+        export type SocketDataT = {
             id: UUID,
-            queue: t.array(t.Function)
-        });
-
-        export type SocketDataT = t.TypeOf<typeof SocketData>;
+            queues: Map<UUID, Array<(state: unknown) => void>>
+        }
 
         // sent to users
         export const StateResponseData = t.type({
@@ -71,12 +69,10 @@ export namespace HCGatewayModels {
 
         export type AuthT = t.TypeOf<typeof Auth>;
 
-        export const SocketData = t.type({
+        export type SocketDataT = {
             id: UUID,
             owner: UUID
-        })
-
-        export type SocketDataT = t.TypeOf<typeof SocketData>;
+        }
 
         // sent to devices
         export const StateRequestData = t.type({

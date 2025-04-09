@@ -2,6 +2,7 @@ import { Logger } from "@nestjs/common";
 import { isLeft } from 'fp-ts/lib/Either.js';
 import { HCGatewayModels } from "hc_models/models";
 import { HCGatewayTypes } from "hc_models/types";
+import { UUID } from "io-ts-types";
 import { ExtendedError } from "socket.io";
 import { tryCatch } from "../../../../lib/try-catch.js";
 import { RepoService } from "../../../repo/services/repo.service.js";
@@ -24,7 +25,7 @@ export const userMiddleware = (server: HCGatewayTypes.User.Server, hc: RepoServi
 
         const socketData: HCGatewayModels.User.SocketDataT = {
             id: userId,
-            queue: new Array<(reply: unknown) => void>()
+            queues: new Map<UUID, Array<(state: unknown) => void>>()
         };
 
         socket.data.user = socketData;
