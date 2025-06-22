@@ -1,15 +1,11 @@
-'use client';
-
-import ColorButton from "@/components/control_panel/rgb_lights/color_button";
-import PowerButton from "@/components/control_panel/rgb_lights/power_button";
-import ProgramButton from "@/components/control_panel/rgb_lights/program_button";
+import PowerButton from "@/components/control_panel/plug/power_button";
 import { useDeviceState } from "@/hooks/device_state";
-import { stateDecode } from "@/lib/api/device_data/rgb_lights";
+import { stateDecode } from "@/lib/api/device_data/plug";
 import { DeviceT } from "hc_models/models";
 import { motion } from "motion/react";
 import Link from "next/link";
 
-export function RGBLightsCard({ device }: { device: DeviceT }) {
+export function PlugCard({ device }: { device: DeviceT }) {
     const { loading, state, ctx } = useDeviceState(device.deviceId, stateDecode);
 
     if (!loading && !state) {
@@ -19,11 +15,12 @@ export function RGBLightsCard({ device }: { device: DeviceT }) {
     }
 
     const ready = state && !loading;
+    const powered = state?.powerState === 'on' || state?.powerState === 'onLocked';
 
     return (
         <div
             className="bg-bg-dark rounded w-64"
-            style={{ boxShadow: ready ? (`0 0 30px 1px rgb(${state.r}, ${state.g}, ${state.b})`) : `` }}
+        //style={{ boxShadow: ready ? (`0 0 30px 1px rgb(${state.r}, ${state.g}, ${state.b})`) : `` }}
         >
             <div className="h-20">
                 <div className="p-2 h-full grid grid-cols-[1fr_3fr] items-center">
@@ -31,7 +28,7 @@ export function RGBLightsCard({ device }: { device: DeviceT }) {
                         <PowerButton
                             enabled={ready}
                             deviceId={device.deviceId}
-                            powered={state?.powered}
+                            state={state}
                             width={30}
                             height={30}
                             ctx={ctx}
@@ -43,15 +40,6 @@ export function RGBLightsCard({ device }: { device: DeviceT }) {
                                 <h1 className={ready ? `text-fg-dark` : `text-fg-light`}>{device.name}</h1>
                             </Link>
                         </div>
-                        <div className="flex justify-center">
-                            <div className="flex gap-3 justify-center items-center">
-                                <ColorButton enabled={ready} ctx={ctx} deviceId={device.deviceId} r={255} g={255} b={255} selectedR={state?.r} selectedG={state?.g} selectedB={state?.b} cn="p-2" />
-                                <ColorButton enabled={ready} ctx={ctx} deviceId={device.deviceId} r={255} g={0} b={0} selectedR={state?.r} selectedG={state?.g} selectedB={state?.b} cn="p-2" />
-                                <ColorButton enabled={ready} ctx={ctx} deviceId={device.deviceId} r={255} g={0} b={255} selectedR={state?.r} selectedG={state?.g} selectedB={state?.b} cn="p-2" />
-                                <ColorButton enabled={ready} ctx={ctx} deviceId={device.deviceId} r={0} g={255} b={255} selectedR={state?.r} selectedG={state?.g} selectedB={state?.b} cn="p-2" />
-                                <ProgramButton enabled={ready} ctx={ctx} deviceId={device.deviceId} program={'rainbowFade'} selectedProgram={state?.program} cn="p-2" />
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -62,10 +50,10 @@ export function RGBLightsCard({ device }: { device: DeviceT }) {
                         initial={{ scale: 0.9 }}
                         animate={{ scale: 1 }}
                     >
-                        ONLINE, POWERED {state.powered ? 'ON' : 'OFF'}
+                        ONLINE, POWERED {powered ? 'ON' : 'OFF'}
                     </motion.p>
                 )}
             </div>
         </div>
-    )
+    );
 }

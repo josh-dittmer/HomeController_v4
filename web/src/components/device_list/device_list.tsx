@@ -2,6 +2,7 @@
 
 import { DeviceT, GetAllDevicesResponseT } from "hc_models/models";
 import { OfflineDeviceCard } from "./cards/offline_card";
+import { PlugCard } from "./cards/plug_card";
 import { RGBLightsCard } from "./cards/rgb_lights_card";
 
 export default function DeviceList({ res }: { res: GetAllDevicesResponseT }) {
@@ -25,6 +26,8 @@ export default function DeviceList({ res }: { res: GetAllDevicesResponseT }) {
                             <div key={device.deviceId} className="pt-4">
                                 {device.type === 'rgb_lights' ? (
                                     <RGBLightsCard key={device.deviceId} device={device} />
+                                ) : device.type === 'plug' ? (
+                                    <PlugCard key={device.deviceId} device={device} />
                                 ) : (
                                     <p key={device.deviceId}>Unknown device type</p>
                                 )

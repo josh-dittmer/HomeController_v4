@@ -3,6 +3,7 @@
 import { GetOneDeviceResponseT } from "hc_models/models";
 import { WifiOff } from "lucide-react";
 import Header from "./header/header";
+import PlugControlPanel from "./plug/control_panel";
 import RGBLightsControlPanel from "./rgb_lights/control_panel";
 
 function OfflineDisplay() {
@@ -22,6 +23,8 @@ export default function ControlPanel({ res }: { res: GetOneDeviceResponseT }) {
             {res.online ? (
                 res.device.type === 'rgb_lights' ? (
                     <RGBLightsControlPanel device={res.device} />
+                ) : res.device.type === 'plug' ? (
+                    <PlugControlPanel device={res.device} />
                 ) : (
                     <p>Unknown device type</p>
                 )

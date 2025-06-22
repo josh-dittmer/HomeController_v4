@@ -26,6 +26,7 @@ export default function AddDeviceWindow({ visible, setVisible }: { visible: bool
     const valid = nameValid && descriptionValid;
 
     const typeOptions: DropdownOption<DeviceTypeT>[] = [
+        { value: 'plug', title: 'Plug' },
         { value: 'rgb_lights', title: 'Light' },
         { value: 'test_device', title: 'Test Device' }
     ];

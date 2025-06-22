@@ -14,6 +14,7 @@ export const DeviceStateResponseTimeout = 5000;
 
 // device types
 export const DeviceType = t.union([
+    t.literal('plug'),
     t.literal('rgb_lights'),
     t.literal('test_device')
 ]);

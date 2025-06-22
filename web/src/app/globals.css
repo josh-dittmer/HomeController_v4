@@ -43,6 +43,7 @@ body {
     --bg-medium: rgb(241, 245, 249);
     --bg-light: rgb(255, 255, 255);
     --bg-accent: #4ade80;
+    --bg-accent-dark: #42c471;
 
     --fg-dark: rgb(0, 0, 0);
     --fg-medium: rgb(107, 114, 128);
@@ -62,6 +63,7 @@ body {
     --bg-medium: rgb(58, 58, 58);
     --bg-light: rgb(66, 65, 65);
     --bg-accent: #16a34a;
+    --bg-accent-dark: #148f41;
 
     --fg-dark: rgb(255, 255, 255);
     --fg-medium: rgb(178, 178, 178);
